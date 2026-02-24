@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // Só cria a coluna se não existir
+        if (!Schema::hasColumn('users', 'cpf')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('cpf')->unique()->after('email');
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Só remove se existir
+        if (Schema::hasColumn('users', 'cpf')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('cpf');
+            });
+        }
+    }
+};
