@@ -1,34 +1,35 @@
-@extends('layout')
+<h1>Lista de Usuários</h1>
 
-@section('content')
-<h1>Usuários</h1>
-<a href="{{ route('users.create') }}">Criar Usuário</a>
+<a href="{{ route('usuarios.create') }}">Novo Usuário</a>
 
-<table>
-    <thead>
+@if(session('success'))
+    <p>{{ session('success') }}</p>
+@endif
+
+<table border="1">
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Tipo</th>
+        <th>Categoria</th>
+        <th>Ações</th>
+    </tr>
+
+    @foreach($usuarios as $usuario)
         <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>CPF</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($users as $user)
-        <tr>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->cpf }}</td>
+            <td>{{ $usuario->name }}</td>
+            <td>{{ $usuario->email }}</td>
+            <td>{{ $usuario->tipo }}</td>
+            <td>{{ $usuario->categoria }}</td>
             <td>
-                <a href="{{ route('users.edit', $user) }}">Editar</a>
-                <form action="{{ route('users.destroy', $user) }}" method="POST">
+                <a href="{{ route('usuarios.edit', $usuario->id) }}">Editar</a>
+
+                <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit">Excluir</button>
                 </form>
             </td>
         </tr>
-        @endforeach
-    </tbody>
+    @endforeach
 </table>
-@endsection
