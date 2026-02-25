@@ -5,5 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 class Cidade extends Model
 {
-    protected $fillable = ['Rubiacea','SP','16750-000'];
+    protected $fillable = [
+        'nome',
+        'uf',
+        'cep',
+    ];
 }
