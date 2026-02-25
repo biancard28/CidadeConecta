@@ -9,7 +9,7 @@
             </h1>
 
             <p class="text-center text-gray-500 mb-6">
-                Cadastre-se para continuar
+                Cadastre-se para ser admin
             </p>
 
             <form method="POST" action="{{ route('register') }}" class="space-y-5">
