@@ -9,8 +9,8 @@ class CidadeController extends Controller
 {
     public function index()
     {
-        $cidades = Cidade::all();
-        return view('cidade.index', compact('cidades'));
+        $cidades = Cidade::all(); // Pega todas as cidades do banco de dados
+        return view('cidade.index', compact('cidades')); // Retorna a view 'cidade.index' passando as cidades para ela
     }
 
     public function create()
@@ -23,4 +23,25 @@ class CidadeController extends Controller
         Cidade::create($request->all());
         return redirect()->route('cidade.index');
     }
+
+
+public function edit($id)
+{
+    $cidade = Cidade::findOrFail($id);
+    return view('cidade.edit', compact('cidade'));
 }
+
+public function update(Request $request, $id)
+{
+    $cidade = Cidade::findOrFail($id);
+    $cidade->update($request->all());
+    return redirect()->route('cidade.index');
+}
+
+public function destroy($id)
+{
+    Cidade::destroy($id);
+    return redirect()->route('cidade.index');
+}
+}
+

@@ -3,11 +3,16 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CidadeController;
+
+Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
+Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
+Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
 
 Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
 Route::get('/cidade/create', [CidadeController::class,'create'])->name('cidade.create');
