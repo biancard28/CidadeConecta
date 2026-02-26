@@ -29,4 +29,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // ⭐ RELACIONAMENTO COM EVENTOS
+    public function eventos()
+    {
+        return $this->hasMany(\App\Models\Evento::class);
+    }
 }
