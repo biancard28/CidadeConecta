@@ -36,4 +36,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Categoria::class);
     }
+
+    // ⭐ RELACIONAMENTO COM EVENTOS
+    public function eventos()
+    {
+        return $this->hasMany(\App\Models\Evento::class);
+    }
 }

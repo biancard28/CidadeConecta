@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\EventoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,7 @@ Route::middleware('auth')->group(function () {
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::resource('eventos', EventoController::class);
 });
 
 require __DIR__.'/auth.php';
