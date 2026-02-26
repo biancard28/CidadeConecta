@@ -1,9 +1,7 @@
-<h1>Cadastrar Cidade</h1>
-
-
 @extends('layout')
 
 @section('conteudo')
+<h1>Cadastrar Cidade</h1>
 
 <div class="card shadow col-md-6 mx-auto border-0">
     <div class="card-header bg-success text-white">
