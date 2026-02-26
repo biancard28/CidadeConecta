@@ -2,13 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CidadeController;
 
 Route::get('/', function () {
     return view('welcome');
 });
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\CidadeController;
 
 Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
 Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
@@ -17,7 +15,6 @@ Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade
 Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
 Route::get('/cidade/create', [CidadeController::class,'create'])->name('cidade.create');
 Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
-Route::resource('users', UserController::class);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -1,11 +1,7 @@
-<h1>Lista de Cidades</h1>
-
-
-
-
 @extends('layout')
 
 @section('conteudo')
+<h1>Lista de Cidades</h1>
 
 <div class="card shadow border-0">
     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
