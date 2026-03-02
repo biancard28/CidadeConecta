@@ -14,8 +14,8 @@ use App\Http\Controllers\EventoController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->name('home');
 
 /*
 |--------------------------------------------------------------------------
@@ -29,14 +29,9 @@ Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
 Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
 Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
 Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
-
-/*
-|--------------------------------------------------------------------------
-| ROTAS CATEGORIAS
-|--------------------------------------------------------------------------
-*/
-
 Route::resource('categorias', CategoriaController::class);
+
+
 
 /*
 |--------------------------------------------------------------------------
