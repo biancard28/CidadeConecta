@@ -8,17 +8,23 @@ class Evento extends Model
 {
     protected $fillable = [
         'user_id',
+        'categoria_id', // 👈 corrigido
         'nome',
         'descricao',
         'local',
         'data',
         'horario',
-        'recorrencia',
-        'id_categoria'
+        'recorrencia'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // 👇 RELAÇÃO COM CATEGORIA
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
     }
 }

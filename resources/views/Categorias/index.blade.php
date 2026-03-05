@@ -12,6 +12,10 @@
     </button>
 </a>
 
+<a href="{{ route('categorias.show', $categoria->id) }}" class="btn btn-info btn-sm">
+    Ver Eventos
+</a>
+
 <br><br>
 
 <table border="1" cellpadding="10" style="width:100%; border-collapse: collapse;">

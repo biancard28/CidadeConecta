@@ -40,4 +40,10 @@ class CategoriaController extends Controller
         $categoria->delete();
         return redirect()->route('categorias.index');
     }
+
+    public function show($id)
+{
+    $categoria = Categoria::with('eventos')->findOrFail($id);
+    return view('categorias.show', compact('categoria'));
+}
 }

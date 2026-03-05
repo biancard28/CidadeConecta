@@ -11,4 +11,10 @@ class Categoria extends Model
         'descricao',
         'tipo'
     ];
+
+    // 👇 UMA CATEGORIA TEM MUITOS EVENTOS
+    public function eventos()
+    {
+        return $this->hasMany(Evento::class);
+    }
 }

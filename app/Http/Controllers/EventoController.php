@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Evento;
 use Illuminate\Http\Request;
+use App\Models\Categoria;
 
 class EventoController extends Controller
 {
@@ -15,13 +16,30 @@ class EventoController extends Controller
 
     public function create()
     {
-        return view('eventos.create');
+        $categorias = Categoria::all();
+        return view('eventos.create', compact('categorias'));
     }
 
     public function store(Request $request)
     {
-        Evento::create($request->all());
-        return redirect()->route('eventos.index');
+        $request->validate([
+            'nome' => 'required',
+            'categoria_id' => 'required|exists:categorias,id'
+        ]);
+
+        Evento::create([
+            'user_id' => auth()->id(),
+            'categoria_id' => $request->categoria_id,
+            'nome' => $request->nome,
+            'descricao' => $request->descricao,
+            'local' => $request->local,
+            'data' => $request->data,
+            'horario' => $request->horario,
+            'recorrencia' => $request->recorrencia,
+        ]);
+
+        return redirect()->route('eventos.index')
+            ->with('success', 'Evento cadastrado com sucesso!');
     }
 
     public function edit(Evento $evento)

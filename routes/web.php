@@ -30,6 +30,7 @@ Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.
 Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
 Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
 Route::resource('categorias', CategoriaController::class);
+Route::resource('categorias', CategoriaController::class);
 
 
 

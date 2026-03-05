@@ -21,4 +21,16 @@
 
 <button>Salvar</button>
 
+<div class="mb-3">
+    <label>Categoria</label>
+    <select name="categoria_id" class="form-control" required>
+        <option value="">Selecione</option>
+        @foreach($categorias as $categoria)
+            <option value="{{ $categoria->id }}">
+                {{ $categoria->nome }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 </form>
