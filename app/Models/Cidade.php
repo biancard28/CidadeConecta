@@ -10,4 +10,9 @@ class Cidade extends Model
         'uf',
         'cep',
     ];
+
+    public function categorias()
+    {
+        return $this->hasMany(Categoria::class);
+    }
 }

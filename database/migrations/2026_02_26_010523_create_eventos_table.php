@@ -26,8 +26,6 @@ return new class extends Migration
                 'anual'
             ])->default('diaria');
 
-            $table->unsignedBigInteger('id_categoria')->nullable();
-
             $table->timestamps();
         });
     }

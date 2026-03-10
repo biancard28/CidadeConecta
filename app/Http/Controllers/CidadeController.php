@@ -7,6 +7,11 @@ use App\Http\Controllers\Controller;
 
 class CidadeController extends Controller
 {
+    public function show(Cidade $cidade)
+    {
+        return view('cidade.show', compact('cidade'));
+    }
+
     public function index()
     {
         $cidades = Cidade::all(); // Pega todas as cidades do banco de dados
@@ -25,23 +30,23 @@ class CidadeController extends Controller
     }
 
 
-public function edit($id)
-{
-    $cidade = Cidade::findOrFail($id);
-    return view('cidade.edit', compact('cidade'));
-}
+    public function edit($id)
+    {
+        $cidade = Cidade::findOrFail($id);
+        return view('cidade.edit', compact('cidade'));
+    }
 
-public function update(Request $request, $id)
-{
-    $cidade = Cidade::findOrFail($id);
-    $cidade->update($request->all());
-    return redirect()->route('cidade.index');
-}
+    public function update(Request $request, $id)
+    {
+        $cidade = Cidade::findOrFail($id);
+        $cidade->update($request->all());
+        return redirect()->route('cidade.index');
+    }
 
-public function destroy($id)
-{
-    Cidade::destroy($id);
-    return redirect()->route('cidade.index');
-}
+    public function destroy($id)
+    {
+        Cidade::destroy($id);
+        return redirect()->route('cidade.index');
+    }
 }
 

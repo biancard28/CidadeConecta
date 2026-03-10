@@ -23,8 +23,9 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
 Route::get('/cidade/create', [CidadeController::class,'create'])->name('cidade.create');
+Route::get('/cidade/{cidade}', [CidadeController::class,'show'])->name('cidade.show');
+Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
 Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
 Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
 Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');

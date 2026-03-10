@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('nome');
             $table->text('descricao')->nullable();
             $table->string('tipo')->nullable();
+            $table->integer('cidade_id')->unsigned();
             $table->timestamps();
         });
     }

@@ -26,7 +26,7 @@
                 @foreach($cidades as $cidade)
                     <tr>
                         <td>{{ $cidade->id }}</td>
-                        <td>{{ $cidade->nome }}</td>
+                        <td><a href="{{ route('cidade.show', $cidade->id) }}">{{ $cidade->nome }}</a></td>
                         <td>{{ $cidade->uf }}</td>
                         <td>{{ $cidade->cep }}</td>
 
