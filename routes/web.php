@@ -22,20 +22,8 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/cidade/create', [CidadeController::class,'create'])->name('cidade.create');
-
-Route::get('/cidade/{cidade}', [CidadeController::class,'show'])->name('cidade.show');
-
-Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
-
-Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
-
-Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
-
-Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
-
-Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
-
+// Cidades
+Route::resource('cidade', CidadeController::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -43,15 +31,8 @@ Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade
 |--------------------------------------------------------------------------
 */
 
-Route::post('/categorias', [CategoriaController::class,'store'])->name('categorias.store');
-
-Route::get('/categorias/{id}/edit', [CategoriaController::class,'edit'])->name('categorias.edit');
-
-Route::put('/categorias/{id}', [CategoriaController::class,'update'])->name('categorias.update');
-
-Route::delete('/categorias/{id}', [CategoriaController::class,'destroy'])->name('categorias.destroy');
-
-
+// Categorias
+Route::resource('categorias', CategoriaController::class)->except(['index', 'create', 'show']);
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD / AUTH
