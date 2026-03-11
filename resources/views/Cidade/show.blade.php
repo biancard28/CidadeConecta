@@ -41,190 +41,137 @@
                     {{-- ABA CATEGORIAS --}}
                     <div class="tab-pane fade show active" id="categorias">
 
-                        <h5 class="mb-3">Cadastrar Categoria nesta Cidade</h5>
+                        <h5 class="mb-3">Categorias desta Cidade</h5>
 
-                        <form method="POST" action="{{ route('categorias.store') }}">
+                        {{-- Form para adicionar nova categoria --}}
+                        <form method="POST" action="{{ route('categorias.store') }}" class="mb-4">
                             @csrf
-
                             <input type="hidden" name="cidade_id" value="{{ $cidade->id }}">
 
-                            <div class="mb-3">
-                                <label class="form-label">Nome</label>
-                                <input type="text" name="nome" class="form-control" placeholder="Ex: Cultura, Esporte"
-                                    required>
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="text" name="nome" class="form-control"
+                                        placeholder="Nome da categoria" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" name="descricao" class="form-control" placeholder="Descrição">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="tipo" class="form-control" placeholder="Tipo">
+                                </div>
+                                <div class="col-md-1">
+                                    <button class="btn btn-success w-100">Adicionar</button>
+                                </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Descrição</label>
-                                <input type="text" name="descricao" class="form-control"
-                                    placeholder="Descrição da categoria">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Tipo</label>
-                                <input type="text" name="tipo" class="form-control" placeholder="Tipo da categoria">
-                            </div>
-
-                            <button class="btn btn-success">
-                                Cadastrar Categoria
-                            </button>
-
                         </form>
 
-                        <hr>
-
-                        <h5 class="mt-4">Categorias desta Cidade</h5>
-
+                        {{-- Lista de categorias --}}
                         <table class="table table-striped">
-
                             <thead>
                                 <tr>
                                     <th>Nome</th>
                                     <th>Descrição</th>
                                     <th>Tipo</th>
-                                    <th width="180">Ações</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($cidade->categorias as $categoria)
+                                    <tr>
+                                        <td>{{ $categoria->nome }}</td>
+                                        <td>{{ $categoria->descricao }}</td>
+                                        <td>{{ $categoria->tipo }}</td>
+                                        <td>
+                                            <a href="{{ route('categorias.edit', $categoria) }}"
+                                                class="btn btn-warning btn-sm">Editar</a>
+
+                                            <form action="{{ route('categorias.destroy', $categoria) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger btn-sm">Excluir</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-muted">Nenhuma categoria cadastrada.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- ABA USUARIOS --}}
+                    <div class="tab-pane fade" id="usuarios">
+
+                        <h5 class="mb-3">Adicionar Usuário Autorizado</h5>
+
+                        <form method="POST" action="{{ route('cidade.usuarios.store', $cidade->id) }}">
+                            @csrf
+
+                            <div class="mb-3">
+                                <label class="form-label">Selecionar Usuário</label>
+
+                                <select name="user_id" class="form-control" required>
+
+                                    <option value="">Selecione um usuário</option>
+
+                                    @foreach ($usuarios as $user)
+                                        <option value="{{ $user->id }}">
+                                            {{ $user->name }} ({{ $user->email }})
+                                        </option>
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                            <button class="btn btn-success">
+                                Adicionar Usuário
+                            </button>
+
+                        </form>
+
+                        <hr>
+                        <h5 class="mb-3">Usuários Autorizados</h5>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th width="120">Ações</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-
-                                @forelse($cidade->categorias as $categoria)
+                                @forelse($cidade->usuariosAutorizados as $usuario)
                                     <tr>
-
-                                        <td>{{ $categoria->nome }}</td>
-
-                                        <td>{{ $categoria->descricao }}</td>
-
-                                        <td>{{ $categoria->tipo }}</td>
-
+                                        <td>{{ $usuario->name }}</td>
+                                        <td>{{ $usuario->email }}</td>
                                         <td>
-
-                                            <a href="{{ route('categorias.edit', $categoria->id) }}"
-                                                class="btn btn-sm btn-warning">
-                                                Editar
-                                            </a>
-
-                                            <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST"
-                                                style="display:inline;">
-
+                                            <form method="POST"
+                                                action="{{ route('cidade.usuarios.destroy', [$cidade->id, $usuario->id]) }}">
                                                 @csrf
                                                 @method('DELETE')
 
-                                                <button class="btn btn-sm btn-danger"
-                                                    onclick="return confirm('Tem certeza que deseja excluir esta categoria?')">
-                                                    Excluir
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Remover usuário desta cidade?')">
+                                                    Remover
                                                 </button>
-
                                             </form>
-
                                         </td>
-
                                     </tr>
-
                                 @empty
-
                                     <tr>
-                                        <td colspan="4" class="text-muted">
-                                            Nenhuma categoria cadastrada.
+                                        <td colspan="3" class="text-muted">
+                                            Nenhum usuário autorizado.
                                         </td>
                                     </tr>
                                 @endforelse
-
                             </tbody>
-
                         </table>
-
                     </div>
-
-                            {{-- ABA USUARIOS --}}
-                            <div class="tab-pane fade" id="usuarios">
-
-                                <h5 class="mb-3">Adicionar Usuário Autorizado</h5>
-
-                                <form method="POST" action="{{ route('cidade.usuarios.store', $cidade->id) }}">
-                                    @csrf
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Selecionar Usuário</label>
-
-                                        <select name="user_id" class="form-control" required>
-
-                                            <option value="">Selecione um usuário</option>
-
-                                            @foreach ($usuarios as $user)
-                                                <option value="{{ $user->id }}">
-                                                    {{ $user->name }} ({{ $user->email }})
-                                                </option>
-                                            @endforeach
-
-                                        </select>
-
-                                    </div>
-
-                                    <button class="btn btn-success">
-                                        Adicionar Usuário
-                                    </button>
-
-                                </form>
-
-                                <hr>
-
-                                <h5 class="mb-3">Usuários Autorizados</h5>
-
-                                <table class="table table-striped">
-
-                                    <thead>
-                                        <tr>
-                                            <th>Nome</th>
-                                            <th>Email</th>
-                                            <th width="120">Ações</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-
-                                        @forelse($cidade->usuariosAutorizados as $usuario)
-                                            <tr>
-
-                                                <td>{{ $usuario->name }}</td>
-
-                                                <td>{{ $usuario->email }}</td>
-
-                                                <td>
-
-                                                    <form method="POST"
-                                                        action="{{ route('cidade.usuarios.destroy', [$cidade->id, $usuario->id]) }}">
-
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <button class="btn btn-danger btn-sm"
-                                                            onclick="return confirm('Remover usuário desta cidade?')">
-
-                                                            Remover
-
-                                                        </button>
-
-                                                    </form>
-
-                                                </td>
-
-                                            </tr>
-
-                                        @empty
-
-                                            <tr>
-                                                <td colspan="3" class="text-muted">
-                                                    Nenhum usuário autorizado.
-                                                </td>
-                                            </tr>
-                                        @endforelse
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
 
                     <a href="{{ route('cidade.index') }}" class="btn btn-outline-success mt-4">
                         Voltar

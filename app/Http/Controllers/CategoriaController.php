@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class CategoriaController extends Controller
 {
     /**
-     * Lista todas as categorias
+     * Lista todas as categorias (não usado, mas deixei por padrão)
      */
     public function index()
     {
@@ -17,7 +17,7 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Exibe formulário de criação
+     * Exibe formulário de criação (não usado, criamos dentro da cidade)
      */
     public function create()
     {
@@ -33,10 +33,10 @@ class CategoriaController extends Controller
             'nome' => $request->nome,
             'descricao' => $request->descricao,
             'tipo' => $request->tipo,
-            'cidade_id' => $request->cidade_id, // obrigatório para saber a cidade
+            'cidade_id' => $request->cidade_id
         ]);
 
-        return redirect()->route('categorias.index');
+        return back();
     }
 
     /**
@@ -64,11 +64,10 @@ class CategoriaController extends Controller
         $categoria->update([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
-            'tipo' => $request->tipo,
-            // NÃO precisa atualizar cidade_id aqui
+            'tipo' => $request->tipo
         ]);
 
-        return redirect()->route('categorias.index');
+        return redirect()->route('cidade.show', $categoria->cidade_id);
     }
 
     /**
@@ -76,7 +75,9 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
+        $cidade_id = $categoria->cidade_id;
         $categoria->delete();
-        return redirect()->route('categorias.index');
+
+        return redirect()->route('cidade.show', $cidade_id);
     }
 }
