@@ -172,13 +172,11 @@
                             </tbody>
                         </table>
                     </div>
-
-                    <a href="{{ route('cidade.index') }}" class="btn btn-outline-success mt-4">
-                        Voltar
-                    </a>
-
                 </div>
 
+                <a href="{{ route('cidade.index') }}" class="btn btn-outline-success mt-4">
+                    Voltar
+                </a>
             </div>
 
         </div>
