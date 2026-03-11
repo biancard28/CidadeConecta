@@ -42,4 +42,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Evento::class);
     }
+
+public function cidades()
+{
+    return $this->belongsToMany(Cidade::class);
+}
 }

@@ -5,7 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EventoController;
-
+use App\Http\Controllers\CidadeUsuarioController;
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -35,6 +35,14 @@ Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.
 Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
 
 Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
+
+Route::get('/cidade/{cidade}/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidade.usuarios');
+
+Route::get('/cidade/{cidade}/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidade.usuarios.create');
+
+Route::post('/cidade/{cidade}/usuarios', [CidadeUsuarioController::class, 'store'])->name('cidade.usuarios.store');
+
+Route::delete('/cidade/{cidade}/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidade.usuarios.destroy');
 
 
 /*

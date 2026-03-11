@@ -33,4 +33,9 @@ class Cidade extends Model
     {
         return $this->belongsToMany(User::class, 'cidade_user', 'cidade_id', 'user_id');
     }
+
+public function usuariosAutorizados()
+{
+    return $this->belongsToMany(User::class);
+}
 }

@@ -4,13 +4,16 @@ namespace App\Http\Controllers;   // ⭐ MUITO IMPORTANTE
 use App\Models\Cidade;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 
 class CidadeController extends Controller
 {
-    public function show(Cidade $cidade)
-    {
-        return view('cidade.show', compact('cidade'));
-    }
+public function show($id)
+{
+    $cidade = Cidade::with(['categorias','usuariosAutorizados'])->findOrFail($id);
+    $usuarios = User::all();
+    return view('cidade.show', compact('cidade','usuarios'));
+}
 
     public function index()
     {
@@ -48,5 +51,6 @@ class CidadeController extends Controller
         Cidade::destroy($id);
         return redirect()->route('cidade.index');
     }
+
 }
 
