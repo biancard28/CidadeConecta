@@ -6,7 +6,6 @@ use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EventoController;
 
-
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -24,15 +23,33 @@ Route::get('/', function () {
 */
 
 Route::get('/cidade/create', [CidadeController::class,'create'])->name('cidade.create');
-Route::get('/cidade/{cidade}', [CidadeController::class,'show'])->name('cidade.show');
-Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
-Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
-Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
-Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
-Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
-Route::resource('categorias', CategoriaController::class);
-Route::resource('categorias', CategoriaController::class);
 
+Route::get('/cidade/{cidade}', [CidadeController::class,'show'])->name('cidade.show');
+
+Route::get('/cidade', [CidadeController::class,'index'])->name('cidade.index');
+
+Route::post('/cidade', [CidadeController::class,'store'])->name('cidade.store');
+
+Route::get('/cidade/{id}/edit', [CidadeController::class,'edit'])->name('cidade.edit');
+
+Route::put('/cidade/{id}', [CidadeController::class,'update'])->name('cidade.update');
+
+Route::delete('/cidade/{id}', [CidadeController::class,'destroy'])->name('cidade.destroy');
+
+
+/*
+|--------------------------------------------------------------------------
+| ROTAS CATEGORIAS (somente ações usadas dentro da cidade)
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/categorias', [CategoriaController::class,'store'])->name('categorias.store');
+
+Route::get('/categorias/{id}/edit', [CategoriaController::class,'edit'])->name('categorias.edit');
+
+Route::put('/categorias/{id}', [CategoriaController::class,'update'])->name('categorias.update');
+
+Route::delete('/categorias/{id}', [CategoriaController::class,'destroy'])->name('categorias.destroy');
 
 
 /*
@@ -54,6 +71,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('eventos', EventoController::class);
+
 });
 
 require __DIR__.'/auth.php';

@@ -2,24 +2,65 @@
 
 @section('conteudo')
 
-<h1>Editar Categoria</h1>
+<div class="container mt-4">
 
-<form action="{{ route('categorias.update', $categoria) }}" method="POST">
-@csrf
-@method('PUT')
+    <h1 class="mb-4">Editar Categoria</h1>
 
-<p>Nome</p>
-<input type="text" name="nome" value="{{ $categoria->nome }}">
+    <div class="card shadow border-0">
 
-<p>Descrição</p>
-<input type="text" name="descricao" value="{{ $categoria->descricao }}">
+        <div class="card-body">
 
-<p>Tipo</p>
-<input type="text" name="tipo" value="{{ $categoria->tipo }}">
+            <form action="{{ route('categorias.update', $categoria) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-<br><br>
-<button type="submit">Atualizar</button>
+                <div class="mb-3">
+                    <label class="form-label">Nome</label>
+                    <input
+                        type="text"
+                        name="nome"
+                        class="form-control"
+                        value="{{ $categoria->nome }}"
+                        required
+                    >
+                </div>
 
-</form>
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <input
+                        type="text"
+                        name="descricao"
+                        class="form-control"
+                        value="{{ $categoria->descricao }}"
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tipo</label>
+                    <input
+                        type="text"
+                        name="tipo"
+                        class="form-control"
+                        value="{{ $categoria->tipo }}"
+                    >
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">
+                        Atualizar
+                    </button>
+
+                    <a href="{{ route('categorias.index') }}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
 @endsection
