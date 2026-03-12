@@ -20,7 +20,6 @@ class CidadeUsuarioController extends Controller
     public function create($cidadeId)
     {
         $cidade = Cidade::findOrFail($cidadeId);
-
         $usuarios = User::all();
 
         return view('cidade.adicionar_usuario', compact('cidade', 'usuarios'));
