@@ -3,6 +3,19 @@
 @section('conteudo')
     <div class="container mt-4">
 
+        {{-- AVISOS DO SISTEMA --}}
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <h1 class="mb-4">Cidade: {{ $cidade->nome }}</h1>
 
         <div class="card shadow border-0">
@@ -23,13 +36,14 @@
                 <ul class="nav nav-tabs" id="cidadeTab">
 
                     <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#categorias">
+                        <button id="tab-categorias" class="nav-link active" data-bs-toggle="tab"
+                            data-bs-target="#categorias">
                             Categorias
                         </button>
                     </li>
 
                     <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#usuarios">
+                        <button id="tab-usuarios" class="nav-link" data-bs-toggle="tab" data-bs-target="#usuarios">
                             Usuários Autorizados
                         </button>
                     </li>
@@ -43,7 +57,6 @@
 
                         <h5 class="mb-3">Categorias desta Cidade</h5>
 
-                        {{-- Form para adicionar nova categoria --}}
                         <form method="POST" action="{{ route('categorias.store') }}" class="mb-4">
                             @csrf
                             <input type="hidden" name="cidade_id" value="{{ $cidade->id }}">
@@ -65,7 +78,6 @@
                             </div>
                         </form>
 
-                        {{-- Lista de categorias --}}
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -75,6 +87,7 @@
                                     <th>Ações</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 @forelse($cidade->categorias as $categoria)
                                     <tr>
@@ -82,24 +95,34 @@
                                         <td>{{ $categoria->descricao }}</td>
                                         <td>{{ $categoria->tipo }}</td>
                                         <td>
+
                                             <a href="{{ route('categorias.edit', $categoria) }}"
-                                                class="btn btn-warning btn-sm">Editar</a>
+                                                class="btn btn-warning btn-sm">
+                                                Editar
+                                            </a>
 
                                             <form action="{{ route('categorias.destroy', $categoria) }}" method="POST"
                                                 style="display:inline-block;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button class="btn btn-danger btn-sm">Excluir</button>
+
+                                                <button class="btn btn-danger btn-sm">
+                                                    Excluir
+                                                </button>
                                             </form>
+
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-muted">Nenhuma categoria cadastrada.</td>
+                                        <td colspan="4" class="text-muted">
+                                            Nenhuma categoria cadastrada.
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
+
                     </div>
 
                     {{-- ABA USUARIOS --}}
@@ -111,6 +134,7 @@
                             @csrf
 
                             <div class="mb-3">
+
                                 <label class="form-label">Selecionar Usuário</label>
 
                                 <select name="user_id" class="form-control" required>
@@ -134,8 +158,11 @@
                         </form>
 
                         <hr>
+
                         <h5 class="mb-3">Usuários Autorizados</h5>
+
                         <table class="table table-striped">
+
                             <thead>
                                 <tr>
                                     <th>Nome</th>
@@ -145,11 +172,15 @@
                             </thead>
 
                             <tbody>
+
                                 @forelse($cidade->usuariosAutorizados as $usuario)
                                     <tr>
+
                                         <td>{{ $usuario->name }}</td>
                                         <td>{{ $usuario->email }}</td>
+
                                         <td>
+
                                             <form method="POST"
                                                 action="{{ route('cidade.usuarios.destroy', [$cidade->id, $usuario->id]) }}">
                                                 @csrf
@@ -159,25 +190,59 @@
                                                     onclick="return confirm('Remover usuário desta cidade?')">
                                                     Remover
                                                 </button>
+
                                             </form>
+
                                         </td>
+
                                     </tr>
+
                                 @empty
+
                                     <tr>
                                         <td colspan="3" class="text-muted">
                                             Nenhum usuário autorizado.
                                         </td>
                                     </tr>
                                 @endforelse
+
                             </tbody>
+
                         </table>
+
                     </div>
+
                 </div>
 
                 <a href="{{ route('cidade.index') }}" class="btn btn-outline-success mt-4">
                     Voltar
                 </a>
+
             </div>
 
         </div>
-    @endsection
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            if (window.location.hash === "#usuarios") {
+
+                let trigger = document.querySelector('#tab-usuarios');
+                let tab = new bootstrap.Tab(trigger);
+                tab.show();
+
+            }
+
+            document.querySelector('#tab-usuarios').addEventListener('click', function() {
+                history.replaceState(null, null, "#usuarios");
+            });
+
+            document.querySelector('#tab-categorias').addEventListener('click', function() {
+                history.replaceState(null, null, "#categorias");
+            });
+
+        });
+    </script>
+@endsection

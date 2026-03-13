@@ -34,10 +34,22 @@ class CidadeUsuarioController extends Controller
 
         $cidade = Cidade::findOrFail($cidadeId);
 
+        // Verifica se já existe
+        $existe = $cidade->usuariosAutorizados()
+            ->where('users.id', $request->user_id)
+            ->exists();
+
+        if ($existe) {
+            return redirect()
+                ->to(route('cidade.show', $cidadeId) . '#usuarios')
+                ->with('error', 'Este usuário já está autorizado para esta cidade.');
+        }
+
+        // Se não existir, adiciona
         $cidade->usuariosAutorizados()->attach($request->user_id);
 
         return redirect()
-            ->route('cidade.show', $cidadeId)
+            ->to(route('cidade.show', $cidadeId) . '#usuarios')
             ->with('success', 'Usuário autorizado com sucesso!');
     }
 
@@ -49,7 +61,7 @@ class CidadeUsuarioController extends Controller
         $cidade->usuariosAutorizados()->detach($userId);
 
         return redirect()
-            ->route('cidade.show', $cidadeId)
+            ->to(route('cidade.show', $cidadeId) . '#usuarios')
             ->with('success', 'Usuário removido da cidade.');
     }
 }
