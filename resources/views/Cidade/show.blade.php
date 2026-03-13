@@ -5,7 +5,6 @@
 
     <div class="container mt-4">
 
-        ```
         {{-- AVISOS DO SISTEMA --}}
         @if (session('error'))
             <div class="alert alert-danger">
