@@ -5,6 +5,7 @@ use App\Models\Cidade;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class CidadeController extends Controller
 {
@@ -17,6 +18,8 @@ public function show($id)
 
     public function index()
     {
+        Gate::authorize('create', Cidade::class);
+
         $cidades = Cidade::all(); // Pega todas as cidades do banco de dados
         return view('cidade.index', compact('cidades')); // Retorna a view 'cidade.index' passando as cidades para ela
     }

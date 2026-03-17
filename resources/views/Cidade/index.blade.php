@@ -6,7 +6,10 @@
 <div class="card shadow border-0">
     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
         <h4 class="mb-0">Cidades</h4>
-        <a href="{{ route('cidade.create') }}" class="btn btn-light btn-sm">+ Nova Cidade</a>
+
+        @can('create', App\Models\Cidade::class)
+            <a href="{{ route('cidade.create') }}" class="btn btn-light btn-sm">+ Nova Cidade</a>
+        @endcan
     </div>
 
     <div class="card-body">
@@ -31,13 +34,15 @@
                         <td>{{ $cidade->cep }}</td>
 
                         <td>
-                            <a href="{{ route('cidade.edit',$cidade->id) }}" class="btn btn-sm btn-warning">Editar</a>
+                            @can('create', App\Models\Cidade::class)
+                                <a href="{{ route('cidade.edit',$cidade->id) }}" class="btn btn-sm btn-warning">Editar</a>
 
-                            <form action="{{ route('cidade.destroy',$cidade->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir cidade?')">Excluir</button>
-                            </form>
+                                <form action="{{ route('cidade.destroy',$cidade->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Excluir cidade?')">Excluir</button>
+                                </form>
+                            @endcan
                         </td>
 
                     </tr>
