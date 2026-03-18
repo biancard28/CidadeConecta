@@ -40,7 +40,7 @@ Route::resource('cidade', CidadeController::class);
 */
 
 // Categorias
-Route::resource('categorias', CategoriaController::class)->except(['index', 'create', 'show']);
+Route::resource('categorias', CategoriaController::class)->except(['index', 'create']);
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD / AUTH

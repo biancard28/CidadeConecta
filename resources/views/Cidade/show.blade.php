@@ -97,7 +97,11 @@
                         <tbody>
                             @forelse($cidade->categorias as $categoria)
                                 <tr>
-                                    <td>{{ $categoria->nome }}</td>
+                                    <td>
+                                        <a href="{{ route('categorias.show', $categoria->id) }}" class="link-primary">
+                                            {{ $categoria->nome }}
+                                        </a>
+                                    </td>
                                     <td>{{ $categoria->descricao }}</td>
                                     <td>{{ $categoria->tipo }}</td>
                                     <td>
