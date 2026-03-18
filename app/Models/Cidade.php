@@ -3,39 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Categoria;
-use App\Models\User;
 
 class Cidade extends Model
 {
-    protected $table = 'cidades';
+    protected $fillable = ['nome', 'uf', 'cep'];
 
-    protected $fillable = [
-        'nome',
-        'uf',
-        'cep',
-    ];
+    /**
+     * Relacionamento com usuários (muitos para muitos)
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'cidade_user');
+        // "cidade_user" é a tabela pivot que conecta cidades e usuários
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONAMENTOS
-    |--------------------------------------------------------------------------
-    */
-
-    // UMA CIDADE TEM VÁRIAS CATEGORIAS
+    /**
+     * Relacionamento com categorias
+     */
     public function categorias()
     {
-        return $this->hasMany(Categoria::class, 'cidade_id');
+        return $this->hasMany(Categoria::class);
     }
 
-    // UMA CIDADE PODE TER VÁRIOS USUÁRIOS AUTORIZADOS (se você estiver usando isso)
-    public function usuarios()
+    /**
+     * Relacionamento com eventos
+     */
+    public function eventos()
     {
-        return $this->belongsToMany(User::class, 'cidade_user', 'cidade_id', 'user_id');
+        return $this->hasManyThrough(Evento::class, Categoria::class);
+        // Eventos através das categorias da cidade
     }
-
-public function usuariosAutorizados()
-{
-    return $this->belongsToMany(User::class);
-}
 }

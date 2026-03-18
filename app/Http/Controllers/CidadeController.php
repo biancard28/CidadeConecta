@@ -1,59 +1,124 @@
 <?php
-namespace App\Http\Controllers;   // ⭐ MUITO IMPORTANTE
 
-use App\Models\Cidade;
+namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Models\Cidade;
 use App\Models\User;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class CidadeController extends Controller
 {
-public function show($id)
-{
-    $cidade = Cidade::with(['categorias','usuariosAutorizados'])->findOrFail($id);
-    $usuarios = User::all();
-    return view('cidade.show', compact('cidade','usuarios'));
-}
-
+    /**
+     * Painel de cidades
+     */
     public function index()
     {
-        Gate::authorize('create', Cidade::class);
+        $user = Auth::user();
 
-        $cidades = Cidade::all(); // Pega todas as cidades do banco de dados
-        return view('cidade.index', compact('cidades')); // Retorna a view 'cidade.index' passando as cidades para ela
+        // SUPER ADMIN vê tudo
+        if ($user->super_admin) {
+            $cidades = Cidade::all();
+        }
+        // ADMIN e USUÁRIO vê só cidades permitidas
+        else {
+            $cidades = $user->cidades;
+        }
+
+        return view('cidade.painel', compact('cidades', 'user'));
     }
 
-    public function create()
+    /**
+     * Exibe detalhes de uma cidade
+     */
+    public function show(Cidade $cidade)
     {
-        return view('cidade.create');
+        $cidade->load('users', 'categorias', 'eventos');
+
+        // Pega todos os usuários que ainda não estão na cidade
+        $usuarios = User::whereDoesntHave('cidades', function ($q) use ($cidade) {
+            $q->where('cidade_id', $cidade->id);
+        })->get();
+
+        return view('cidade.show', compact('cidade', 'usuarios'));
     }
 
-    public function store(Request $request)
+    /**
+     * Adiciona usuário à cidade
+     */
+    public function addUser(Request $request, Cidade $cidade)
     {
-        Cidade::create($request->all());
-        return redirect()->route('cidade.index');
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $user_id = $request->user_id;
+
+        // Evita duplicidade
+        if (!$cidade->users->contains($user_id)) {
+            $cidade->users()->attach($user_id);
+        }
+
+        return back()->with('success', 'Usuário adicionado à cidade!');
     }
 
-
-    public function edit($id)
+    /**
+     * Remove usuário da cidade
+     */
+    public function removeUser($cidade_id, $user_id)
     {
-        $cidade = Cidade::findOrFail($id);
+        $cidade = Cidade::findOrFail($cidade_id);
+        $user = User::findOrFail($user_id);
+
+        // Bloqueia se o usuário logado tentar se remover
+        if (Auth::id() == $user_id) {
+            return back()->with('error', 'Você não pode se remover da cidade.');
+        }
+
+        // Remove usuário normalmente
+        $cidade->users()->detach($user_id);
+
+        return back()->with('success', 'Usuário removido da cidade.');
+    }
+
+    /**
+     * Edita cidade (apenas admins autorizados)
+     */
+    public function edit(Cidade $cidade)
+    {
+        $this->authorize('update', $cidade);
         return view('cidade.edit', compact('cidade'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Atualiza cidade
+     */
+    public function update(Request $request, Cidade $cidade)
     {
-        $cidade = Cidade::findOrFail($id);
+        $this->authorize('update', $cidade);
+
+        $request->validate([
+            'nome' => 'required',
+            'uf' => 'required|max:2',
+            'cep' => 'required',
+        ]);
+
         $cidade->update($request->all());
-        return redirect()->route('cidade.index');
+
+        return redirect()->route('cidade.painel')
+            ->with('success', 'Cidade atualizada com sucesso!');
     }
 
-    public function destroy($id)
+    /**
+     * Deleta cidade
+     */
+    public function destroy(Cidade $cidade)
     {
-        Cidade::destroy($id);
-        return redirect()->route('cidade.index');
+        $this->authorize('delete', $cidade);
+
+        $cidade->delete();
+
+        return redirect()->route('cidade.painel')
+            ->with('success', 'Cidade deletada com sucesso!');
     }
-
 }
-

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Import necessário para usar Auth
 
 class CategoriaController extends Controller
 {
@@ -29,6 +30,9 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
+        // Autorização opcional: só super admin ou usuários da cidade podem criar
+        // $this->authorize('create', Categoria::class);
+
         Categoria::create([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
@@ -36,7 +40,7 @@ class CategoriaController extends Controller
             'cidade_id' => $request->cidade_id
         ]);
 
-        return back();
+        return back()->with('success', 'Categoria criada com sucesso!');
     }
 
     /**
@@ -53,6 +57,9 @@ class CategoriaController extends Controller
      */
     public function edit(Categoria $categoria)
     {
+        // Chama a policy update antes de permitir editar
+        $this->authorize('update', $categoria);
+
         return view('categorias.edit', compact('categoria'));
     }
 
@@ -61,13 +68,17 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, Categoria $categoria)
     {
+        // Chama a policy update antes de permitir atualizar
+        $this->authorize('update', $categoria);
+
         $categoria->update([
             'nome' => $request->nome,
             'descricao' => $request->descricao,
             'tipo' => $request->tipo
         ]);
 
-        return redirect()->route('cidade.show', $categoria->cidade_id);
+        return redirect()->route('cidade.show', $categoria->cidade_id)
+            ->with('success', 'Categoria atualizada com sucesso!');
     }
 
     /**
@@ -75,9 +86,13 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
+        // Chama a policy delete antes de permitir deletar
+        $this->authorize('delete', $categoria);
+
         $cidade_id = $categoria->cidade_id;
         $categoria->delete();
 
-        return redirect()->route('cidade.show', $cidade_id);
+        return redirect()->route('cidade.show', $cidade_id)
+            ->with('success', 'Categoria deletada com sucesso!');
     }
 }

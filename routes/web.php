@@ -63,4 +63,8 @@ Route::middleware('auth')->group(function () {
 
 });
 
+Route::get('/admin/cidades', [\App\Http\Controllers\CidadeController::class, 'index'])
+    ->name('cidade.painel')
+    ->middleware('auth');
+
 require __DIR__.'/auth.php';

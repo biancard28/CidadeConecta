@@ -5,22 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Cidade;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CidadeUsuarioController extends Controller
 {
-    // Lista usuários autorizados da cidade
-    public function index($cidadeId)
-    {
-        $cidade = Cidade::with('usuariosAutorizados')->findOrFail($cidadeId);
-
-        return view('cidade.usuarios', compact('cidade'));
-    }
-
     // Tela para adicionar usuário autorizado
     public function create($cidadeId)
     {
         $cidade = Cidade::findOrFail($cidadeId);
-        $usuarios = User::all();
+        $usuarios = User::all(); // ou filtrar usuários que não estão na cidade
 
         return view('cidade.adicionar_usuario', compact('cidade', 'usuarios'));
     }
@@ -33,20 +26,17 @@ class CidadeUsuarioController extends Controller
         ]);
 
         $cidade = Cidade::findOrFail($cidadeId);
+        $userId = $request->user_id;
 
-        // Verifica se já existe
-        $existe = $cidade->usuariosAutorizados()
-            ->where('users.id', $request->user_id)
-            ->exists();
-
-        if ($existe) {
+        // Verifica se já está na cidade
+        if ($cidade->users->contains($userId)) {
             return redirect()
                 ->to(route('cidade.show', $cidadeId) . '#usuarios')
                 ->with('error', 'Este usuário já está autorizado para esta cidade.');
         }
 
-        // Se não existir, adiciona
-        $cidade->usuariosAutorizados()->attach($request->user_id);
+        // Adiciona usuário
+        $cidade->users()->attach($userId);
 
         return redirect()
             ->to(route('cidade.show', $cidadeId) . '#usuarios')
@@ -58,7 +48,14 @@ class CidadeUsuarioController extends Controller
     {
         $cidade = Cidade::findOrFail($cidadeId);
 
-        $cidade->usuariosAutorizados()->detach($userId);
+        // Bloqueia remoção do próprio usuário
+        if (Auth::id() == $userId) {
+            return redirect()
+                ->to(route('cidade.show', $cidadeId) . '#usuarios')
+                ->with('error', 'Você não pode se remover da cidade.');
+        }
+
+        $cidade->users()->detach($userId);
 
         return redirect()
             ->to(route('cidade.show', $cidadeId) . '#usuarios')
