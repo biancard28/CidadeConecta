@@ -19,13 +19,33 @@ class CidadeController extends Controller
         // SUPER ADMIN vê tudo
         if ($user->super_admin) {
             $cidades = Cidade::all();
+
+            return view('cidade.index', compact('cidades', 'user'));
         }
         // ADMIN e USUÁRIO vê só cidades permitidas
         else {
             $cidades = $user->cidades;
+
+            return view('cidade.painel', compact('cidades', 'user'));
         }
 
-        return view('cidade.painel', compact('cidades', 'user'));
+    }
+
+    public function create()
+    {
+        return view('cidade.create');
+    }
+
+    public function store(Request $request){
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255|unique:cidades,nome',
+            'uf' => 'required|in:AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO',
+            'cep' => 'required|regex:/^\d{5}-?\d{3}$/',
+        ]);
+
+        $cidade = Cidade::create($validated);
+
+        return redirect()->route('cidade.show', $cidade->id);
     }
 
     /**

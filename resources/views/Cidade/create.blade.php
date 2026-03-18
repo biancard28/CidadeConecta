@@ -15,47 +15,34 @@
 
             <div class="mb-3">
                 <label class="form-label text-success fw-bold">Nome</label>
-                <input type="text" name="nome" class="form-control border-success">
+                <input type="text" name="nome" class="form-control border-success @error('nome') is-invalid @enderror" value="{{ old('nome') }}">
+                @error('nome')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
                 <label class="form-label text-success fw-bold">UF</label>
-                <select name="uf" class="form-select border-success">
+                <select name="uf" class="form-select border-success @error('uf') is-invalid @enderror">
                     <option value="">Selecione o estado</option>
-
-                    <option value="AC" {{ old('uf') == 'AC' ? 'selected' : '' }}>AC</option>
-                    <option value="AL" {{ old('uf') == 'AL' ? 'selected' : '' }}>AL</option>
-                    <option value="AP" {{ old('uf') == 'AP' ? 'selected' : '' }}>AP</option>
-                    <option value="AM" {{ old('uf') == 'AM' ? 'selected' : '' }}>AM</option>
-                    <option value="BA" {{ old('uf') == 'BA' ? 'selected' : '' }}>BA</option>
-                    <option value="CE" {{ old('uf') == 'CE' ? 'selected' : '' }}>CE</option>
-                    <option value="DF" {{ old('uf') == 'DF' ? 'selected' : '' }}>DF</option>
-                    <option value="ES" {{ old('uf') == 'ES' ? 'selected' : '' }}>ES</option>
-                    <option value="GO" {{ old('uf') == 'GO' ? 'selected' : '' }}>GO</option>
-                    <option value="MA" {{ old('uf') == 'MA' ? 'selected' : '' }}>MA</option>
-                    <option value="MT" {{ old('uf') == 'MT' ? 'selected' : '' }}>MT</option>
-                    <option value="MS" {{ old('uf') == 'MS' ? 'selected' : '' }}>MS</option>
-                    <option value="MG" {{ old('uf') == 'MG' ? 'selected' : '' }}>MG</option>
-                    <option value="PA" {{ old('uf') == 'PA' ? 'selected' : '' }}>PA</option>
-                    <option value="PB" {{ old('uf') == 'PB' ? 'selected' : '' }}>PB</option>
-                    <option value="PR" {{ old('uf') == 'PR' ? 'selected' : '' }}>PR</option>
-                    <option value="PE" {{ old('uf') == 'PE' ? 'selected' : '' }}>PE</option>
-                    <option value="PI" {{ old('uf') == 'PI' ? 'selected' : '' }}>PI</option>
-                    <option value="RJ" {{ old('uf') == 'RJ' ? 'selected' : '' }}>RJ</option>
-                    <option value="RN" {{ old('uf') == 'RN' ? 'selected' : '' }}>RN</option>
-                    <option value="RS" {{ old('uf') == 'RS' ? 'selected' : '' }}>RS</option>
-                    <option value="RO" {{ old('uf') == 'RO' ? 'selected' : '' }}>RO</option>
-                    <option value="RR" {{ old('uf') == 'RR' ? 'selected' : '' }}>RR</option>
-                    <option value="SC" {{ old('uf') == 'SC' ? 'selected' : '' }}>SC</option>
-                    <option value="SP" {{ old('uf') == 'SP' ? 'selected' : '' }}>SP</option>
-                    <option value="SE" {{ old('uf') == 'SE' ? 'selected' : '' }}>SE</option>
-                    <option value="TO" {{ old('uf') == 'TO' ? 'selected' : '' }}>TO</option>
-
+                    @php
+                        $ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+                    @endphp
+                    @foreach($ufs as $uf)
+                        <option value="{{ $uf }}" {{ old('uf') == $uf ? 'selected' : '' }}>{{ $uf }}</option>
+                    @endforeach
                 </select>
+                @error('uf')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
+
             <div class="mb-3">
                 <label class="form-label text-success fw-bold">CEP</label>
-                <input type="text" name="cep" class="form-control border-success">
+                <input type="text" name="cep" id="cep" class="form-control border-success @error('cep') is-invalid @enderror" value="{{ old('cep') }}">
+                @error('cep')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <button class="btn btn-success">Salvar</button>
@@ -65,5 +52,18 @@
 
     </div>
 </div>
+
+<!-- Adicione este script no final do seu Blade -->
+<script>
+    const cepInput = document.getElementById('cep');
+
+    cepInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+        if (value.length > 5) {
+            value = value.slice(0,5) + '-' + value.slice(5,8); // Adiciona o hífen
+        }
+        e.target.value = value;
+    });
+</script>
 
 @endsection
