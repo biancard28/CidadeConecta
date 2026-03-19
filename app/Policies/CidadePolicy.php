@@ -1,24 +1,37 @@
 <?php
 
 namespace App\Policies;
-use Illuminate\Auth\Access\Response;
 
 use App\Models\User;
+use App\Models\Cidade;
+use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CidadePolicy
 {
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
+    use HandlesAuthorization;
+
+    public function viewAny(User $user)
     {
-        //
+        return true;
+    }
+
+    public function view(User $user, Cidade $cidade)
+    {
+        return true;
     }
 
     public function create(User $user)
     {
-        return $user->super_admin
-            ? Response::allow()
-            : Response::deny('Você precisa ser um administrador para acessar o conteúdo.');
+        return true;
+    }
+
+    public function update(User $user, Cidade $cidade)
+    {
+        return true; // 🔥 libera editar
+    }
+
+    public function delete(User $user, Cidade $cidade)
+    {
+        return true; // 🔥 libera excluir
     }
 }

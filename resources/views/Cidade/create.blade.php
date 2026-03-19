@@ -10,7 +10,7 @@
 
     <div class="card-body">
 
-        <form method="POST" action="{{ route('cidade.store') }}">
+        <form method="POST" action="{{ route('cidades.store') }}">
             @csrf
 
             <div class="mb-3">
@@ -46,21 +46,20 @@
             </div>
 
             <button class="btn btn-success">Salvar</button>
-            <a href="{{ route('cidade.index') }}" class="btn btn-outline-success">Voltar</a>
+            <a href="{{ route('cidades.index') }}" class="btn btn-outline-success">Voltar</a>
 
         </form>
 
     </div>
 </div>
 
-<!-- Adicione este script no final do seu Blade -->
 <script>
     const cepInput = document.getElementById('cep');
 
     cepInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+        let value = e.target.value.replace(/\D/g, '');
         if (value.length > 5) {
-            value = value.slice(0,5) + '-' + value.slice(5,8); // Adiciona o hífen
+            value = value.slice(0,5) + '-' + value.slice(5,8);
         }
         e.target.value = value;
     });

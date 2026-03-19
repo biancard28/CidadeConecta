@@ -38,7 +38,7 @@ class EventoController extends Controller
             'cidade_id' => 'required|exists:cidades,id' // Necessário para a policy
         ]);
 
-        Evento::create([
+        $evento = Evento::create([
             'user_id' => Auth::id(),
             'categoria_id' => $request->categoria_id,
             'cidade_id' => $request->cidade_id, // Importante para a policy
@@ -50,7 +50,7 @@ class EventoController extends Controller
             'recorrencia' => $request->recorrencia,
         ]);
 
-        return redirect()->route('eventos.index')
+        return redirect()->route('categoria.show' , $evento->categoria_id)
             ->with('success', 'Evento cadastrado com sucesso!');
     }
 

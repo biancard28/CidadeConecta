@@ -46,11 +46,12 @@ class CategoriaController extends Controller
     /**
      * Mostra detalhes da categoria
      */
-    public function show(Categoria $categoria)
-    {
-        $categoria->load('eventos'); // carrega os eventos
-        return view('categorias.show', compact('categoria'));
-    }
+    public function show($id)
+{
+    $categoria = \App\Models\Categoria::with('eventos', 'cidade')->findOrFail($id);
+
+    return view('categorias.show', compact('categoria'));
+}
 
     /**
      * Exibe formulário de edição

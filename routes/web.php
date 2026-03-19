@@ -6,65 +6,88 @@ use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\CidadeUsuarioController;
+
 /*
 |--------------------------------------------------------------------------
 | HOME
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| ROTAS CIDADE
+| ROTAS PROTEGIDAS (LOGIN)
 |--------------------------------------------------------------------------
 */
-
-Route::get('/cidade/{cidade}/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidade.usuarios');
-
-Route::get('/cidade/{cidade}/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidade.usuarios.create');
-
-Route::post('/cidade/{cidade}/usuarios', [CidadeUsuarioController::class, 'store'])->name('cidade.usuarios.store');
-
-Route::delete('/cidade/{cidade}/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidade.usuarios.destroy');
-
-// Cidades
-Route::resource('cidade', CidadeController::class);
-
-/*
-|--------------------------------------------------------------------------
-| ROTAS CATEGORIAS (somente ações usadas dentro da cidade)
-|--------------------------------------------------------------------------
-*/
-
-// Categorias
-Route::resource('categorias', CategoriaController::class)->except(['index', 'create']);
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD / AUTH
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | CIDADES
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('cidades', CidadeController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | USUÁRIOS DA CIDADE
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/cidades/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidades.usuarios.index');
+
+    Route::resource('categorias', CategoriaController::class);
+
+    Route::get('/cidades/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidades.usuarios.create');
+
+    Route::post('/cidades/usuarios', [CidadeUsuarioController::class, 'store'])->name('cidades.usuarios.store');
+
+    Route::delete('/cidades/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidades.usuarios.destroy');
+
+    /*
+    |--------------------------------------------------------------------------
+    | CATEGORIAS
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('categorias', CategoriaController::class)->except(['index', 'create']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | EVENTOS
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('eventos', EventoController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | PERFIL
+    |--------------------------------------------------------------------------
+    */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('eventos', EventoController::class);
-
 });
 
-Route::get('/admin/cidades', [\App\Http\Controllers\CidadeController::class, 'index'])
-    ->name('cidade.painel')
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD
+|--------------------------------------------------------------------------
+*/
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+/*
+|--------------------------------------------------------------------------
+| PAINEL ADMIN
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin/cidades', [CidadeController::class, 'index'])
+    ->name('cidades.painel')
     ->middleware('auth');
 
 require __DIR__.'/auth.php';
