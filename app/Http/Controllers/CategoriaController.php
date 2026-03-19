@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Import necessário para usar Auth
+use Illuminate\Support\Facades\Auth;
 
 class CategoriaController extends Controller
 {
     /**
-     * Lista todas as categorias (não usado, mas deixei por padrão)
+     * Lista todas as categorias
      */
     public function index()
     {
@@ -18,7 +18,7 @@ class CategoriaController extends Controller
     }
 
     /**
-     * Exibe formulário de criação (não usado, criamos dentro da cidade)
+     * Exibe formulário de criação
      */
     public function create()
     {
@@ -30,37 +30,35 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        // Autorização opcional: só super admin ou usuários da cidade podem criar
-        // $this->authorize('create', Categoria::class);
-
-        Categoria::create([
-            'nome' => $request->nome,
-            'descricao' => $request->descricao,
-            'tipo' => $request->tipo,
-            'cidade_id' => $request->cidade_id
+        // Validação
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string|max:1000',
+            'tipo' => 'nullable|string|max:50',
+            'cidade_id' => 'required|exists:cidades,id',
         ]);
 
-        return back()->with('success', 'Categoria criada com sucesso!');
+        $categoria = Categoria::create($validated);
+
+        return redirect()->route('categorias.show', $categoria->id)
+            ->with('success', 'Categoria criada com sucesso!');
     }
 
     /**
      * Mostra detalhes da categoria
      */
-    public function show($id)
-{
-    $categoria = \App\Models\Categoria::with('eventos', 'cidade')->findOrFail($id);
-
-    return view('categorias.show', compact('categoria'));
-}
+    public function show(Categoria $categoria)
+    {
+        $categoria->load('eventos', 'cidade');
+        return view('categorias.show', compact('categoria'));
+    }
 
     /**
      * Exibe formulário de edição
      */
     public function edit(Categoria $categoria)
     {
-        // Chama a policy update antes de permitir editar
         $this->authorize('update', $categoria);
-
         return view('categorias.edit', compact('categoria'));
     }
 
@@ -69,16 +67,17 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, Categoria $categoria)
     {
-        // Chama a policy update antes de permitir atualizar
         $this->authorize('update', $categoria);
 
-        $categoria->update([
-            'nome' => $request->nome,
-            'descricao' => $request->descricao,
-            'tipo' => $request->tipo
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string|max:1000',
+            'tipo' => 'nullable|string|max:50',
         ]);
 
-        return redirect()->route('cidade.show', $categoria->cidade_id)
+        $categoria->update($validated);
+
+        return redirect()->route('cidades.show', $categoria->cidade_id)
             ->with('success', 'Categoria atualizada com sucesso!');
     }
 
@@ -87,13 +86,12 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
-        // Chama a policy delete antes de permitir deletar
         $this->authorize('delete', $categoria);
 
         $cidade_id = $categoria->cidade_id;
         $categoria->delete();
 
-        return redirect()->route('cidade.show', $cidade_id)
+        return redirect()->route('cidades.show', $cidade_id)
             ->with('success', 'Categoria deletada com sucesso!');
     }
 }

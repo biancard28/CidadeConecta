@@ -36,13 +36,8 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/cidades/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidades.usuarios.index');
-
-    Route::resource('categorias', CategoriaController::class);
-
     Route::get('/cidades/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidades.usuarios.create');
-
     Route::post('/cidades/usuarios', [CidadeUsuarioController::class, 'store'])->name('cidades.usuarios.store');
-
     Route::delete('/cidades/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidades.usuarios.destroy');
 
     /*
@@ -50,7 +45,7 @@ Route::middleware('auth')->group(function () {
     | CATEGORIAS
     |--------------------------------------------------------------------------
     */
-    Route::resource('categorias', CategoriaController::class)->except(['index', 'create']);
+    Route::resource('categorias', CategoriaController::class);
 
     /*
     |--------------------------------------------------------------------------
@@ -65,11 +60,8 @@ Route::middleware('auth')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
 });
 
 /*

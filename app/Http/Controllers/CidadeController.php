@@ -45,7 +45,7 @@ class CidadeController extends Controller
 
         $cidade = Cidade::create($validated);
 
-        return redirect()->route('cidade.show', $cidade->id);
+        return redirect()->route('cidades.show', $cidade->id);
     }
 
     /**

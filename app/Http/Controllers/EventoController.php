@@ -50,8 +50,8 @@ class EventoController extends Controller
             'recorrencia' => $request->recorrencia,
         ]);
 
-        return redirect()->route('categoria.show' , $evento->categoria_id)
-            ->with('success', 'Evento cadastrado com sucesso!');
+    return redirect()->route('categorias.show', $evento->categoria_id)
+        ->with('success', 'Evento cadastrado com sucesso!');
     }
 
     /**
