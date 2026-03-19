@@ -10,19 +10,13 @@ class EventoPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determina se o usuário pode editar o evento
-     */
-    public function update(User $user, Evento $evento)
-    {
-        return $user->cidades->contains($evento->cidade_id);
-    }
+public function update(User $user, Evento $evento)
+{
+    return $user->id === $evento->user_id;
+}
 
-    /**
-     * Determina se o usuário pode deletar o evento
-     */
-    public function delete(User $user, Evento $evento)
-    {
-        return $user->cidades->contains($evento->cidade_id);
-    }
+public function delete(User $user, Evento $evento)
+{
+    return $user->id === $evento->user_id;
+}
 }

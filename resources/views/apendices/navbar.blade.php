@@ -7,17 +7,16 @@
             <span class="fw-bold">CidadeConecta</span>
         </a>
 
-        <!-- Botão hamburguer para mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Botão hamburguer -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Conteúdo da navbar -->
+        <!-- Conteúdo -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-            <!-- Links principais -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <!-- Links -->
+            <ul class="navbar-nav me-auto">
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
@@ -26,24 +25,24 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('cidade.index') ? 'active' : '' }}"
-                        href="{{ route('cidade.index') }}">
+                    <a class="nav-link {{ request()->routeIs('cidades.index') ? 'active' : '' }}"
+                        href="{{ route('cidades.index') }}">
                         Cidades
                     </a>
                 </li>
 
             </ul>
 
-            <!-- Barra de pesquisa -->
-            <form class="d-flex me-3" role="search">
-                <input class="form-control me-2" type="search" placeholder="Pesquisar..." aria-label="Search">
+            <!-- Busca -->
+            <form class="d-flex me-3">
+                <input class="form-control me-2" type="search" placeholder="Pesquisar...">
                 <button class="btn btn-outline-light" type="submit">
-                    <i class="bi bi-search"></i>
+                    🔍
                 </button>
             </form>
 
-            <!-- Links de login/logout -->
-            <ul class="navbar-nav mb-2 mb-lg-0">
+            <!-- Auth -->
+            <ul class="navbar-nav">
 
                 @auth
                     <li class="nav-item">

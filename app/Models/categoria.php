@@ -3,13 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Evento;
-use App\Models\Cidade;
 
 class Categoria extends Model
 {
-    protected $table = 'categorias';
-
     protected $fillable = [
         'nome',
         'descricao',
@@ -17,21 +13,15 @@ class Categoria extends Model
         'cidade_id'
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONAMENTOS
-    |--------------------------------------------------------------------------
-    */
-
-    // UMA CATEGORIA TEM MUITOS EVENTOS
+    // RELAÇÃO COM EVENTOS
     public function eventos()
     {
-        return $this->hasMany(Evento::class);
+        return $this->hasMany(\App\Models\Evento::class);
     }
 
-    // UMA CATEGORIA PERTENCE A UMA CIDADE
+    // RELAÇÃO COM CIDADE
     public function cidade()
     {
-        return $this->belongsTo(Cidade::class, 'cidade_id');
+        return $this->belongsTo(\App\Models\Cidade::class);
     }
 }
