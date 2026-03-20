@@ -92,8 +92,8 @@ class EventoController extends Controller
             'recorrencia' => $request->recorrencia,
         ]);
 
-        return redirect()->route('eventos.index')
-            ->with('success', 'Evento atualizado com sucesso!');
+        return redirect()->route('categorias.show', $evento->categoria_id)
+    ->with('success', 'Evento atualizado com sucesso!');
     }
 
     /**
