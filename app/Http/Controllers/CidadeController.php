@@ -10,6 +10,24 @@ use Illuminate\Support\Facades\Auth;
 class CidadeController extends Controller
 {
     /**
+     * 🔥 AUTOCOMPLETE
+     */
+    public function autocomplete(Request $request)
+    {
+        $query = $request->get('q');
+
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $cidades = Cidade::where('nome', 'LIKE', "%{$query}%")
+            ->limit(10)
+            ->pluck('nome');
+
+        return response()->json($cidades);
+    }
+
+    /**
      * Painel de cidades
      */
     public function index()
@@ -28,7 +46,6 @@ class CidadeController extends Controller
 
             return view('cidade.painel', compact('cidades', 'user'));
         }
-
     }
 
     public function create()
@@ -48,14 +65,10 @@ class CidadeController extends Controller
         return redirect()->route('cidades.show', $cidade->id);
     }
 
-    /**
-     * Exibe detalhes de uma cidade
-     */
     public function show(Cidade $cidade)
     {
         $cidade->load('users', 'categorias', 'eventos');
 
-        // Pega todos os usuários que ainda não estão na cidade
         $usuarios = User::whereDoesntHave('cidades', function ($q) use ($cidade) {
             $q->where('cidade_id', $cidade->id);
         })->get();
@@ -63,9 +76,6 @@ class CidadeController extends Controller
         return view('cidade.show', compact('cidade', 'usuarios'));
     }
 
-    /**
-     * Adiciona usuário à cidade
-     */
     public function addUser(Request $request, Cidade $cidade)
     {
         $request->validate([
@@ -74,7 +84,6 @@ class CidadeController extends Controller
 
         $user_id = $request->user_id;
 
-        // Evita duplicidade
         if (!$cidade->users->contains($user_id)) {
             $cidade->users()->attach($user_id);
         }
@@ -82,37 +91,26 @@ class CidadeController extends Controller
         return back()->with('success', 'Usuário adicionado à cidade!');
     }
 
-    /**
-     * Remove usuário da cidade
-     */
     public function removeUser($cidade_id, $user_id)
     {
         $cidade = Cidade::findOrFail($cidade_id);
         $user = User::findOrFail($user_id);
 
-        // Bloqueia se o usuário logado tentar se remover
         if (Auth::id() == $user_id) {
             return back()->with('error', 'Você não pode se remover da cidade.');
         }
 
-        // Remove usuário normalmente
         $cidade->users()->detach($user_id);
 
         return back()->with('success', 'Usuário removido da cidade.');
     }
 
-    /**
-     * Edita cidade (apenas admins autorizados)
-     */
     public function edit(Cidade $cidade)
     {
         $this->authorize('update', $cidade);
         return view('cidade.edit', compact('cidade'));
     }
 
-    /**
-     * Atualiza cidade
-     */
     public function update(Request $request, Cidade $cidade)
     {
         $this->authorize('update', $cidade);
@@ -129,9 +127,6 @@ class CidadeController extends Controller
             ->with('success', 'Cidade atualizada com sucesso!');
     }
 
-    /**
-     * Deleta cidade
-     */
     public function destroy(Cidade $cidade)
     {
         $this->authorize('delete', $cidade);
