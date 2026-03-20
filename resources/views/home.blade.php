@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Cidade Conecta</title>
@@ -54,7 +55,8 @@
         .search-box {
             text-align: center;
             margin-top: 25px;
-            position: relative; /* necessário para o autocomplete */
+            position: relative;
+            /* necessário para o autocomplete */
         }
 
         .search-box input {
@@ -124,12 +126,13 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- TOPO -->
     <div class="top-bar">
         <div class="cidade-atual">
-            @if(isset($cidadeAtual))
+            @if (isset($cidadeAtual))
                 Você está em: {{ $cidadeAtual }}
             @else
                 Você está em: Não identificado
@@ -150,7 +153,7 @@
     <!-- BUSCA -->
     <div class="search-box">
         <form action="/buscar" method="GET">
-            <input type="text" id="cidadeInput" name="q" placeholder="Digite a sua cidade" autocomplete="off">
+            <input type="text" id="cidadeInput" name="q" placeholder="Digite a sua cidade" autofocus>
             <div id="autocomplete-list" class="autocomplete-items"></div>
             <br>
             <button type="submit">Buscar</button>
@@ -171,40 +174,46 @@
 
     <!-- SCRIPT DE AUTOCOMPLETE -->
     <script>
-    const input = document.getElementById("cidadeInput");
-    const autocompleteList = document.getElementById("autocomplete-list");
+        const input = document.getElementById("cidadeInput");
+        const autocompleteList = document.getElementById("autocomplete-list");
 
-    input.addEventListener("input", function() {
-        const val = this.value;
-        autocompleteList.innerHTML = "";
+        let debounceTimer;
 
-        if (!val) return;
+        input.addEventListener("input", function() {
+            const val = this.value;
 
-        // Faz requisição AJAX para o backend Laravel
-        fetch(`/cidades/autocomplete?q=${encodeURIComponent(val)}`)
-            .then(response => response.json())
-            .then(cidades => {
-                cidades.forEach(cidade => {
-                    const item = document.createElement("div");
-                    item.classList.add("autocomplete-item");
-                    item.innerHTML = `<strong>${cidade.substr(0, val.length)}</strong>${cidade.substr(val.length)}`;
-                    item.addEventListener("click", () => {
-                        input.value = cidade;
-                        autocompleteList.innerHTML = "";
+            // limpa o timer anterior
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                autocompleteList.innerHTML = "";
+
+                if (!val) return;
+
+                fetch(`/cidades/autocomplete?q=${encodeURIComponent(val)}`)
+                    .then(response => response.json())
+                    .then(cidades => {
+                        cidades.forEach(cidade => {
+                            const item = document.createElement("div");
+                            item.classList.add("autocomplete-item");
+                            item.innerHTML =
+                                `<strong>${cidade.substr(0, val.length)}</strong>${cidade.substr(val.length)}`;
+                            item.addEventListener("click", () => {
+                                input.value = cidade;
+                                autocompleteList.innerHTML = "";
+                            });
+                            autocompleteList.appendChild(item);
+                        });
                     });
-                    autocompleteList.appendChild(item);
-                });
-            });
-    });
+            }, 300); // tempo de debounce (300ms é um bom padrão)
+        });
 
-    // Fecha a lista se clicar fora
-    document.addEventListener("click", function(e) {
-        if (e.target !== input) {
-            autocompleteList.innerHTML = "";
-        }
-    });
+        document.addEventListener("click", function(e) {
+            if (e.target !== input) {
+                autocompleteList.innerHTML = "";
+            }
+        });
     </script>
-
 </body>
-</html>
 
+</html>

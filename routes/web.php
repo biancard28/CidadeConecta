@@ -6,15 +6,16 @@ use App\Http\Controllers\CidadeController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\EventoController;
 use App\Http\Controllers\CidadeUsuarioController;
+use App\Http\Controllers\SiteController;
 
 /*
 |--------------------------------------------------------------------------
 | HOME
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+Route::get('/', [SiteController::class, 'home'])->name('home');
+
+Route::get('/agenda-municipal/{cidade}/titulo-cidade', [SiteController::class, 'agenda_municipal'])->name('site.agenda_municipal');
 
 /*
 |--------------------------------------------------------------------------
