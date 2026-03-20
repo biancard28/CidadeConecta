@@ -50,8 +50,8 @@ class EventoController extends Controller
             'recorrencia' => $request->recorrencia,
         ]);
 
-    return redirect()->route('categorias.show', $evento->categoria_id)
-        ->with('success', 'Evento cadastrado com sucesso!');
+        return redirect()->route('categorias.show', $evento->categoria_id)
+            ->with('success', 'Evento cadastrado com sucesso!');
     }
 
     /**
@@ -59,10 +59,12 @@ class EventoController extends Controller
      */
     public function edit(Evento $evento)
     {
-        // Chama a policy antes de permitir editar
         $this->authorize('update', $evento);
 
-        return view('eventos.edit', compact('evento'));
+        $categorias = Categoria::all();
+        $cidades = \App\Models\Cidade::all();
+
+        return view('eventos.edit', compact('evento', 'categorias', 'cidades'));
     }
 
     /**
