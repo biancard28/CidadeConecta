@@ -16,7 +16,6 @@
             min-height: 100vh;
         }
 
-        /* TOPO: esquerda = cidade / direita = menu */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -28,20 +27,24 @@
 
         .cidade-atual {
             font-weight: bold;
-            color: #202124;
         }
 
-        .top-menu a {
+        .top-menu a,
+        .top-menu button {
             margin-left: 20px;
             text-decoration: none;
             color: #202124;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
 
-        .top-menu a:hover {
+        .top-menu a:hover,
+        .top-menu button:hover {
             text-decoration: underline;
         }
 
-        /* LOGO */
         .logo {
             text-align: center;
             margin-top: 60px;
@@ -51,12 +54,10 @@
             font-size: 42px;
         }
 
-        /* SEARCH */
         .search-box {
             text-align: center;
             margin-top: 25px;
             position: relative;
-            /* necessário para o autocomplete */
         }
 
         .search-box input {
@@ -77,23 +78,12 @@
             cursor: pointer;
         }
 
-        /* CONTEÚDO */
         .container {
             text-align: center;
             margin-top: 20px;
             flex: 1;
         }
 
-        .cidade-lista {
-            margin-top: 20px;
-        }
-
-        .cidade-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        /* RODAPÉ */
         .footer {
             text-align: center;
             padding: 20px;
@@ -102,7 +92,6 @@
             border-top: 1px solid #dadce0;
         }
 
-        /* Estilo do autocomplete */
         .autocomplete-items {
             position: absolute;
             border: 1px solid #dadce0;
@@ -140,8 +129,17 @@
         </div>
 
         <div class="top-menu">
-            <a href="/login">Login Admin</a>
-            <a href="/register">Cadastrar</a>
+            @auth
+                <a href="#">Perfil</a>
+
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit">Sair</button>
+                </form>
+            @else
+                <a href="/login">Login</a>
+                <a href="/register">Cadastrar</a>
+            @endauth
         </div>
     </div>
 
@@ -172,7 +170,7 @@
         <p>Segunda a sexta, 08h às 17h</p>
     </div>
 
-    <!-- SCRIPT DE AUTOCOMPLETE -->
+    <!-- SCRIPT AUTOCOMPLETE -->
     <script>
         const input = document.getElementById("cidadeInput");
         const autocompleteList = document.getElementById("autocomplete-list");
@@ -182,7 +180,6 @@
         input.addEventListener("input", function() {
             const val = this.value;
 
-            // limpa o timer anterior
             clearTimeout(debounceTimer);
 
             debounceTimer = setTimeout(() => {
@@ -205,7 +202,7 @@
                             autocompleteList.appendChild(item);
                         });
                     });
-            }, 300); // tempo de debounce (300ms é um bom padrão)
+            }, 300);
         });
 
         document.addEventListener("click", function(e) {
@@ -214,6 +211,6 @@
             }
         });
     </script>
-</body>
 
+</body>
 </html>
