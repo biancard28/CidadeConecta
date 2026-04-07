@@ -16,19 +16,14 @@
             min-height: 100vh;
         }
 
-        /* TOPO: esquerda = cidade / direita = menu */
+        /* TOPO */
         .top-bar {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* AGORA FICA À DIREITA */
             align-items: center;
             padding: 15px 25px;
             font-size: 14px;
             border-bottom: 1px solid #dadce0;
-        }
-
-        .cidade-atual {
-            font-weight: bold;
-            color: #202124;
         }
 
         .top-menu a {
@@ -56,7 +51,6 @@
             text-align: center;
             margin-top: 25px;
             position: relative;
-            /* necessário para o autocomplete */
         }
 
         .search-box input {
@@ -84,15 +78,6 @@
             flex: 1;
         }
 
-        .cidade-lista {
-            margin-top: 20px;
-        }
-
-        .cidade-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
         /* RODAPÉ */
         .footer {
             text-align: center;
@@ -102,7 +87,7 @@
             border-top: 1px solid #dadce0;
         }
 
-        /* Estilo do autocomplete */
+        /* AUTOCOMPLETE */
         .autocomplete-items {
             position: absolute;
             border: 1px solid #dadce0;
@@ -131,14 +116,6 @@
 
     <!-- TOPO -->
     <div class="top-bar">
-        <div class="cidade-atual">
-            @if (isset($cidadeAtual))
-                Você está em: {{ $cidadeAtual }}
-            @else
-                Você está em: Não identificado
-            @endif
-        </div>
-
         <div class="top-menu">
             <a href="/login">Login Admin</a>
             <a href="/register">Cadastrar</a>
@@ -172,17 +149,16 @@
         <p>Segunda a sexta, 08h às 17h</p>
     </div>
 
-    <!-- SCRIPT DE AUTOCOMPLETE -->
+    <!-- SCRIPT AUTOCOMPLETE -->
     <script>
         const input = document.getElementById("cidadeInput");
         const autocompleteList = document.getElementById("autocomplete-list");
 
         let debounceTimer;
 
-        input.addEventListener("input", function() {
+        input.addEventListener("input", function () {
             const val = this.value;
 
-            // limpa o timer anterior
             clearTimeout(debounceTimer);
 
             debounceTimer = setTimeout(() => {
@@ -196,24 +172,28 @@
                         cidades.forEach(cidade => {
                             const item = document.createElement("div");
                             item.classList.add("autocomplete-item");
+
                             item.innerHTML =
                                 `<strong>${cidade.substr(0, val.length)}</strong>${cidade.substr(val.length)}`;
+
                             item.addEventListener("click", () => {
                                 input.value = cidade;
                                 autocompleteList.innerHTML = "";
                             });
+
                             autocompleteList.appendChild(item);
                         });
                     });
-            }, 300); // tempo de debounce (300ms é um bom padrão)
+            }, 300);
         });
 
-        document.addEventListener("click", function(e) {
+        document.addEventListener("click", function (e) {
             if (e.target !== input) {
                 autocompleteList.innerHTML = "";
             }
         });
     </script>
+
 </body>
 
 </html>
