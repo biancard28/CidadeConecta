@@ -15,7 +15,13 @@ use App\Http\Controllers\SiteController;
 */
 Route::get('/', [SiteController::class, 'home'])->name('home');
 
-Route::get('/agenda-municipal/{cidade}/titulo-cidade', [SiteController::class, 'agenda_municipal'])->name('site.agenda_municipal');
+/*
+|--------------------------------------------------------------------------
+| AGENDA MUNICIPAL (CORRIGIDO ✅)
+|--------------------------------------------------------------------------
+*/
+Route::get('/agenda-municipal/{cidade}', [SiteController::class, 'agenda_municipal'])
+    ->name('site.agenda_municipal');
 
 /*
 |--------------------------------------------------------------------------

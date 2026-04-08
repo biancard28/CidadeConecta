@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class CidadeController extends Controller
 {
     /**
-     * 🔥 AUTOCOMPLETE
+     * 🔥 AUTOCOMPLETE (CORRIGIDO)
      */
     public function autocomplete(Request $request)
     {
@@ -20,9 +20,10 @@ class CidadeController extends Controller
             return response()->json([]);
         }
 
+        // 👇 AGORA RETORNA ID + NOME
         $cidades = Cidade::where('nome', 'LIKE', "%{$query}%")
             ->limit(10)
-            ->pluck('nome');
+            ->get(['id', 'nome']);
 
         return response()->json($cidades);
     }
@@ -34,16 +35,11 @@ class CidadeController extends Controller
     {
         $user = Auth::user();
 
-        // SUPER ADMIN vê tudo
         if ($user->super_admin) {
             $cidades = Cidade::all();
-
             return view('cidade.index', compact('cidades', 'user'));
-        }
-        // ADMIN e USUÁRIO vê só cidades permitidas
-        else {
+        } else {
             $cidades = $user->cidades;
-
             return view('cidade.painel', compact('cidades', 'user'));
         }
     }
@@ -53,7 +49,8 @@ class CidadeController extends Controller
         return view('cidade.create');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'nome' => 'required|string|max:255|unique:cidades,nome',
             'uf' => 'required|in:AC,AL,AP,AM,BA,CE,DF,ES,GO,MA,MT,MS,MG,PA,PB,PR,PE,PI,RJ,RN,RS,RO,RR,SC,SP,SE,TO',
@@ -123,7 +120,7 @@ class CidadeController extends Controller
 
         $cidade->update($request->all());
 
-        return redirect()->route('cidade.painel')
+        return redirect()->route('cidades.painel')
             ->with('success', 'Cidade atualizada com sucesso!');
     }
 
@@ -133,7 +130,7 @@ class CidadeController extends Controller
 
         $cidade->delete();
 
-        return redirect()->route('cidade.painel')
+        return redirect()->route('cidades.painel')
             ->with('success', 'Cidade deletada com sucesso!');
     }
 }

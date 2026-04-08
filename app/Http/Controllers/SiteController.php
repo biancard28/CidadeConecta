@@ -3,17 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cidade;
+use App\Models\Evento;
 use Illuminate\Http\Request;
 
 class SiteController extends Controller
 {
+    // HOME
     public function home()
     {
         return view('home');
     }
 
-    public function agenda_municipal(Cidade $cidade)
+    // AGENDA DA CIDADE
+    public function agenda_municipal(Request $request, Cidade $cidade)
     {
-        return view('agenda_municipal', compact('cidade'));
+        // pega categorias da cidade
+        $categorias = $cidade->categorias;
+
+        // FILTRO POR CATEGORIA
+        if ($request->has('categoria')) {
+            $eventos = Evento::where('categoria_id', $request->categoria)
+                ->orderBy('data')
+                ->get();
+        } else {
+            // todos eventos da cidade
+            $eventos = $cidade->eventos()->orderBy('data')->get();
+        }
+
+        return view('agenda_municipal', compact('cidade', 'categorias', 'eventos'));
     }
 }

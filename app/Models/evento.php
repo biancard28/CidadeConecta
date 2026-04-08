@@ -8,7 +8,7 @@ class Evento extends Model
 {
     protected $fillable = [
         'user_id',
-        'categoria_id', // 👈 corrigido
+        'categoria_id',
         'nome',
         'descricao',
         'local',
