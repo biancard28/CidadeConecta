@@ -31,18 +31,22 @@ class CidadeController extends Controller
     /**
      * Painel de cidades
      */
-    public function index()
-    {
-        $user = Auth::user();
+public function index()
+{
+    $user = Auth::user();
 
-        if ($user->super_admin) {
-            $cidades = Cidade::all();
-            return view('cidade.index', compact('cidades', 'user'));
-        } else {
-            $cidades = $user->cidades;
-            return view('cidade.painel', compact('cidades', 'user'));
-        }
+    // Se for admin, pega todas
+    if ($user->admin || $user->super_admin) {
+        $cidades = Cidade::all();
+    } else {
+        // Senão, pega só as autorizadas
+        $cidades = Cidade::whereHas('users', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })->get();
     }
+
+    return view('cidade.index', compact('cidades', 'user'));
+}
 
     public function create()
     {
@@ -62,16 +66,15 @@ class CidadeController extends Controller
         return redirect()->route('cidades.show', $cidade->id);
     }
 
-    public function show(Cidade $cidade)
-    {
-        $cidade->load('users', 'categorias', 'eventos');
 
-        $usuarios = User::whereDoesntHave('cidades', function ($q) use ($cidade) {
-            $q->where('cidade_id', $cidade->id);
-        })->get();
+public function show(Cidade $cidade)
+{
+    $this->authorize('view', $cidade);
 
-        return view('cidade.show', compact('cidade', 'usuarios'));
-    }
+    $usuarios = User::all(); // 👈 AQUI
+
+    return view('cidade.show', compact('cidade', 'usuarios'));
+}
 
     public function addUser(Request $request, Cidade $cidade)
     {

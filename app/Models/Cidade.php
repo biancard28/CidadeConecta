@@ -11,11 +11,10 @@ class Cidade extends Model
     /**
      * Relacionamento com usuários (muitos para muitos)
      */
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'cidade_user');
-        // "cidade_user" é a tabela pivot que conecta cidades e usuários
-    }
+public function users()
+{
+    return $this->belongsToMany(User::class);
+}
 
     /**
      * Relacionamento com categorias

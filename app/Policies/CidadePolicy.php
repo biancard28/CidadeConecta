@@ -15,10 +15,16 @@ class CidadePolicy
         return true;
     }
 
-    public function view(User $user, Cidade $cidade)
-    {
+public function view(User $user, Cidade $cidade)
+{
+    // Admin vê tudo
+    if ($user->admin || $user->super_admin) {
         return true;
     }
+
+    // Usuário comum só vê cidades autorizadas
+    return $user->cidades->contains($cidade->id);
+}
 
     public function create(User $user)
     {
