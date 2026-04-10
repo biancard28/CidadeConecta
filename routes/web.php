@@ -51,8 +51,8 @@ Route::middleware('auth')->group(function () {
     */
     Route::get('/cidades/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidades.usuarios.index');
     Route::get('/cidades/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidades.usuarios.create');
-    Route::post('/cidades/usuarios', [CidadeUsuarioController::class, 'store'])->name('cidades.usuarios.store');
-    Route::delete('/cidades/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidades.usuarios.destroy');
+    Route::post('/cidades/usuarios/{cidade}', [CidadeUsuarioController::class, 'store'])->name('cidades.usuarios.store');
+    Route::delete('/cidades/{cidade}/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidades.usuarios.destroy');
 
     /*
     |--------------------------------------------------------------------------
@@ -83,9 +83,9 @@ Route::middleware('auth')->group(function () {
 | DASHBOARD
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------

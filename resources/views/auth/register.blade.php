@@ -1,151 +1,127 @@
 <x-guest-layout>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-300 via-emerald-400 to-green-600">
+    <h1 class="auth-card-title">Criar conta</h1>
+    <p class="auth-card-subtitle">Cadastre-se para administrar sua cidade</p>
 
-    <div class="backdrop-blur-lg bg-white/80 shadow-2xl rounded-3xl p-10 w-full max-w-md border border-white/40">
+    {{-- Erros gerais --}}
+    @if ($errors->any())
+        <div class="alert-error">
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:.25rem;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        <h1 class="text-3xl font-bold text-center text-green-700 mb-2">
-            Criar conta
-        </h1>
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
 
-        <p class="text-center text-gray-500 mb-6">
-            Cadastre-se para ser admin
-        </p>
+        {{-- Nome --}}
+        <div class="field-group">
+            <label class="field-label" for="name">Nome completo</label>
+            <input
+                id="name"
+                type="text"
+                name="name"
+                value="{{ old('name') }}"
+                required
+                autofocus
+                autocomplete="name"
+                class="field-input {{ $errors->has('name') ? 'error' : '' }}"
+                placeholder="João da Silva"
+            >
+            @error('name')
+                <p class="field-error">{{ $message }}</p>
+            @enderror
+        </div>
 
-        {{-- erros gerais --}}
-        @if ($errors->any())
-            <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+        {{-- CPF --}}
+        <div class="field-group">
+            <label class="field-label" for="cpf">CPF</label>
+            <input
+                id="cpf"
+                type="text"
+                name="cpf"
+                value="{{ old('cpf') }}"
+                required
+                maxlength="14"
+                autocomplete="off"
+                class="field-input {{ $errors->has('cpf') ? 'error' : '' }}"
+                placeholder="000.000.000-00"
+            >
+            @error('cpf')
+                <p class="field-error">{{ $message }}</p>
+            @enderror
+        </div>
 
-        <form method="POST" action="{{ route('register') }}" class="space-y-5">
-            @csrf
+        {{-- Email --}}
+        <div class="field-group">
+            <label class="field-label" for="email">E-mail</label>
+            <input
+                id="email"
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                autocomplete="username"
+                class="field-input {{ $errors->has('email') ? 'error' : '' }}"
+                placeholder="seu@email.com"
+            >
+            @error('email')
+                <p class="field-error">{{ $message }}</p>
+            @enderror
+        </div>
 
-            {{-- Nome --}}
-            <div>
+        {{-- Senha + Confirmação lado a lado em telas maiores --}}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem;">
+            <div class="field-group">
+                <label class="field-label" for="password">Senha</label>
                 <input
-                    type="text"
-                    name="name"
-                    value="{{ old('name') }}"
-                    placeholder="Nome completo"
-                    required
-                    autofocus
-                    autocomplete="name"
-                    class="w-full px-4 py-3 rounded-xl border
-                    @error('name') border-red-500 @else border-gray-200 @enderror
-                    focus:border-green-500 focus:ring-2 focus:ring-green-300 outline-none transition"
-                >
-
-                @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- CPF --}}
-            <div>
-                <input
-                    type="text"
-                    name="cpf"
-                    value="{{ old('cpf') }}"
-                    placeholder="CPF"
-                    required
-                    maxlength="14"
-                    autocomplete="off"
-                    class="w-full px-4 py-3 rounded-xl border
-                    @error('cpf') border-red-500 @else border-gray-200 @enderror
-                    focus:border-green-500 focus:ring-2 focus:ring-green-300 outline-none transition"
-                >
-
-                @error('cpf')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Email --}}
-            <div>
-                <input
-                    type="email"
-                    name="email"
-                    value="{{ old('email') }}"
-                    placeholder="Email"
-                    required
-                    autocomplete="username"
-                    class="w-full px-4 py-3 rounded-xl border
-                    @error('email') border-red-500 @else border-gray-200 @enderror
-                    focus:border-green-500 focus:ring-2 focus:ring-green-300 outline-none transition"
-                >
-
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            {{-- Senha --}}
-            <div>
-                <input
+                    id="password"
                     type="password"
                     name="password"
-                    placeholder="Senha"
                     required
                     autocomplete="new-password"
-                    class="w-full px-4 py-3 rounded-xl border
-                    @error('password') border-red-500 @else border-gray-200 @enderror
-                    focus:border-green-500 focus:ring-2 focus:ring-green-300 outline-none transition"
+                    class="field-input {{ $errors->has('password') ? 'error' : '' }}"
+                    placeholder="••••••••"
                 >
-
                 @error('password')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    <p class="field-error">{{ $message }}</p>
                 @enderror
             </div>
 
-            {{-- Confirmar senha --}}
-            <div>
+            <div class="field-group">
+                <label class="field-label" for="password_confirmation">Confirmar</label>
                 <input
+                    id="password_confirmation"
                     type="password"
                     name="password_confirmation"
-                    placeholder="Confirmar senha"
                     required
                     autocomplete="new-password"
-                    class="w-full px-4 py-3 rounded-xl border border-gray-200
-                    focus:border-green-500 focus:ring-2 focus:ring-green-300 outline-none transition"
+                    class="field-input"
+                    placeholder="••••••••"
                 >
             </div>
+        </div>
 
-            {{-- Botão --}}
-            <button
-                type="submit"
-                class="w-full py-3 rounded-xl text-white font-bold bg-gradient-to-r from-green-500 to-emerald-600 hover:scale-[1.02] active:scale-[0.98] transition shadow-lg">
-                Cadastrar
-            </button>
+        <button type="submit" class="btn-primary">Criar conta</button>
 
-            <p class="text-center text-sm text-gray-600">
-                Já possui conta?
-                <a href="{{ route('login') }}" class="text-green-700 font-semibold hover:underline">
-                    Entrar
-                </a>
-            </p>
+    </form>
 
-        </form>
-
+    <div class="auth-card-footer">
+        Já possui conta?
+        <a class="auth-link" href="{{ route('login') }}">Entrar</a>
     </div>
 
-</div>
+</x-guest-layout>
 
 <script>
-    document.querySelector('input[name="cpf"]').addEventListener('input', function(e) {
-        let v = e.target.value.replace(/\D/g,'');
-
-        v = v.replace(/(\d{3})(\d)/,'$1.$2');
-        v = v.replace(/(\d{3})(\d)/,'$1.$2');
-        v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-
+    document.getElementById('cpf').addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d)/, '$1.$2');
+        v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
         e.target.value = v;
     });
 </script>
-
-</x-guest-layout>

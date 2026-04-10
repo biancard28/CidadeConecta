@@ -19,19 +19,18 @@ class CidadeUsuarioController extends Controller
     }
 
     // Salvar usuário autorizado
-    public function store(Request $request, $cidadeId)
+    public function store(Request $request, Cidade $cidade)
     {
         $request->validate([
             'user_id' => 'required|exists:users,id'
         ]);
 
-        $cidade = Cidade::findOrFail($cidadeId);
         $userId = $request->user_id;
 
         // Verifica se já está na cidade
         if ($cidade->users->contains($userId)) {
             return redirect()
-                ->to(route('cidade.show', $cidadeId) . '#usuarios')
+                ->to(route('cidade.show', $cidade) . '#usuarios')
                 ->with('error', 'Este usuário já está autorizado para esta cidade.');
         }
 
@@ -39,26 +38,24 @@ class CidadeUsuarioController extends Controller
         $cidade->users()->attach($userId);
 
         return redirect()
-            ->to(route('cidade.show', $cidadeId) . '#usuarios')
+            ->to(route('cidades.show', $cidade) . '#usuarios')
             ->with('success', 'Usuário autorizado com sucesso!');
     }
 
     // Remover usuário autorizado
-    public function destroy($cidadeId, $userId)
+    public function destroy(Cidade $cidade, User $user)
     {
-        $cidade = Cidade::findOrFail($cidadeId);
-
         // Bloqueia remoção do próprio usuário
-        if (Auth::id() == $userId) {
+        if (Auth::id() == $user->id) {
             return redirect()
-                ->to(route('cidade.show', $cidadeId) . '#usuarios')
+                ->to(route('cidades.show', $cidade) . '#usuarios')
                 ->with('error', 'Você não pode se remover da cidade.');
         }
 
-        $cidade->users()->detach($userId);
+        $cidade->users()->detach($user->id);
 
         return redirect()
-            ->to(route('cidade.show', $cidadeId) . '#usuarios')
+            ->to(route('cidades.show', $cidade) . '#usuarios')
             ->with('success', 'Usuário removido da cidade.');
     }
 }
