@@ -4,12 +4,10 @@
 
 @section('conteudo')
 
-{{-- CABEÇALHO DA PÁGINA --}}
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
 
     <div>
         <span style="
-            display:inline-block;
             font-size:11px;
             font-weight:600;
             letter-spacing:2px;
@@ -18,14 +16,14 @@
             background:var(--verde-xlight);
             padding:4px 12px;
             border-radius:50px;
-            margin-bottom:8px;
         ">Agenda Municipal</span>
-        <h2 style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-0.5px; color:var(--texto); margin:0;">
+
+        <h2 style="font-size:26px; font-weight:700; margin-top:6px;">
             Agenda da Cidade
         </h2>
     </div>
 
-    {{-- DROPDOWN CIDADE --}}
+    {{-- BOTÃO CIDADE --}}
     <div style="position:relative;" id="cidadeDropdownWrapper">
         <button onclick="toggleDropdown()" style="
             display:flex;
@@ -36,132 +34,270 @@
             border:none;
             padding:10px 18px;
             border-radius:50px;
-            font-family:'Sora',sans-serif;
-            font-size:14px;
-            font-weight:600;
             cursor:pointer;
-            transition:background 0.2s;
-        " onmouseover="this.style.background='var(--verde-light)'"
-           onmouseout="this.style.background='var(--verde)'">
+        ">
             📍 {{ $cidade->nome }}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"/>
-            </svg>
         </button>
 
         <div id="cidadeDropdown" style="
             display:none;
             position:absolute;
             right:0;
-            top:calc(100% + 6px);
             background:#fff;
-            border:1px solid var(--cinza-borda);
-            border-radius:var(--radius);
-            box-shadow:var(--shadow);
-            min-width:180px;
-            padding:8px 0;
-            z-index:50;
+            border:1px solid #ddd;
+            border-radius:8px;
+            padding:10px;
         ">
-            <div style="padding:10px 16px; font-size:14px; color:var(--texto-suave);">
-                <p style="margin:0 0 4px;"><strong style="color:var(--texto);">UF:</strong> {{ $cidade->uf }}</p>
-                <p style="margin:0;"><strong style="color:var(--texto);">CEP:</strong> {{ $cidade->cep }}</p>
-            </div>
+            <p><strong>UF:</strong> {{ $cidade->uf }}</p>
+            <p><strong>CEP:</strong> {{ $cidade->cep }}</p>
         </div>
     </div>
 
 </div>
 
-{{-- CARD EVENTOS --}}
-<div style="
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    border:1px solid var(--cinza-borda);
-">
+{{-- CARD --}}
+<div style="background:#fff; border-radius:12px; border:1px solid #e5e7eb;">
 
-    <div style="
-        background:var(--verde);
-        color:#fff;
-        padding:14px 24px;
-        font-family:'Sora',sans-serif;
-        font-size:15px;
-        font-weight:600;
-        letter-spacing:0.3px;
-    ">
+    <div style="background:var(--verde); color:#fff; padding:14px 20px;">
         📅 Agenda do Mês
     </div>
 
-    <div style="padding:20px 24px;">
+    <div style="padding:20px; display:flex; gap:24px; align-items:flex-start;">
 
-        @forelse($eventos as $evento)
+        {{-- FILTRO --}}
+        <form method="GET" style="
+            width:280px;
+            background:linear-gradient(180deg, #fff, #f9fafb);
+            border:1px solid #e5e7eb;
+            border-radius:14px;
+            padding:18px;
+            box-shadow:0 6px 18px rgba(0,0,0,0.06);
+            position:sticky;
+            top:20px;
+        ">
 
-            <div style="
-                margin-bottom:16px;
-                padding:20px;
-                border:1px solid var(--cinza-borda);
-                border-radius:var(--radius);
-                background:var(--cinza-bg);
-                transition:box-shadow 0.2s;
-            " onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'"
-               onmouseout="this.style.boxShadow='none'">
+            <h4 style="margin-bottom:16px; font-size:14px; font-weight:700;">
+                🔎 Filtros
+            </h4>
 
-                <h5 style="
-                    font-family:'Sora',sans-serif;
-                    font-size:16px;
-                    font-weight:700;
-                    color:var(--verde);
-                    margin:0 0 14px;
-                ">{{ $evento->nome }}</h5>
+            {{-- CATEGORIA --}}
+            <div style="margin-bottom:16px;">
+                <label style="font-size:12px; color:#6b7280;">Categoria</label>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px 16px; margin-bottom:12px;">
-                    <p style="margin:0; font-size:14px; color:var(--texto);">
-                        <strong>📅 Data:</strong> {{ $evento->data }}
-                    </p>
-                    <p style="margin:0; font-size:14px; color:var(--texto);">
-                        <strong>📍 Local:</strong> {{ $evento->local }}
-                    </p>
-                    <p style="margin:0; font-size:14px; color:var(--texto);">
-                        <strong>⏰ Horário:</strong> {{ $evento->horario }}
-                    </p>
-                    <p style="margin:0; font-size:14px; color:var(--texto);">
-                        <strong>🏷 Categoria:</strong> {{ $evento->categoria->nome ?? '-' }}
-                    </p>
-                </div>
+                <select name="categoria" style="
+                    width:100%;
+                    margin-top:6px;
+                    padding:10px;
+                    border-radius:10px;
+                    border:1px solid #e5e7eb;
+                    background:#fff;
+                ">
+                    <option value="">📌 Todas as categorias</option>
 
-                <p style="margin:0; font-size:14px; color:var(--texto-suave); line-height:1.6;">
-                    {{ $evento->descricao }}
-                </p>
-
+                    @foreach($categorias ?? [] as $cat)
+                        <option value="{{ $cat->id }}"
+                            {{ request('categoria') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->nome }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
-        @empty
+            {{-- PERÍODO --}}
+            <div style="margin-bottom:16px;">
+                <label style="font-size:12px; color:#6b7280;">Período</label>
 
-            <div style="text-align:center; padding:48px 24px;">
-                <p style="font-size:40px; margin-bottom:12px;">📭</p>
-                <p style="color:var(--texto-suave); font-size:15px;">Nenhum evento encontrado para este mês.</p>
+                <input type="date" name="data_inicio"
+                    value="{{ request('data_inicio') }}"
+                    style="width:100%; margin-top:6px; padding:10px; border-radius:10px; border:1px solid #e5e7eb;">
+
+                <input type="date" name="data_fim"
+                    value="{{ request('data_fim') }}"
+                    style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:1px solid #e5e7eb;">
             </div>
 
-        @endforelse
+            <div style="display:flex; gap:8px;">
+                <button type="submit" style="
+                    flex:1;
+                    background:var(--verde);
+                    color:#fff;
+                    border:none;
+                    padding:10px;
+                    border-radius:10px;
+                    font-weight:600;
+                    cursor:pointer;
+                ">Filtrar</button>
+
+                <a href="{{ url()->current() }}" style="
+                    flex:1;
+                    text-align:center;
+                    background:#f3f4f6;
+                    padding:10px;
+                    border-radius:10px;
+                    text-decoration:none;
+                    color:#111827;
+                    font-weight:600;
+                ">Limpar</a>
+            </div>
+
+        </form>
+
+        {{-- CALENDÁRIO --}}
+        <div style="flex:1;">
+            <div id="calendar" style="
+                background:#fff;
+                border:1px solid #e5e7eb;
+                border-radius:10px;
+                padding:16px;
+            "></div>
+        </div>
 
     </div>
+</div>
 
+{{-- MODAL --}}
+<div id="modal" style="
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+">
+    <div style="background:#fff; padding:20px; border-radius:12px; width:400px;">
+        <h3 id="modalTitulo"></h3>
+        <p id="modalData"></p>
+        <p id="modalHora"></p>
+        <p id="modalLocal"></p>
+        <p id="modalCategoria"></p>
+        <p id="modalDescricao"></p>
+
+        <button onclick="fecharModal()" style="
+            margin-top:10px;
+            background:var(--verde);
+            color:#fff;
+            padding:10px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+        ">Fechar</button>
+    </div>
 </div>
 
 @endsection
 
 @push('scripts')
+
 <script>
-    function toggleDropdown() {
-        const dd = document.getElementById('cidadeDropdown');
-        dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+
+const eventos = @json($eventos);
+let currentDate = new Date();
+
+function renderCalendar() {
+
+    const calendar = document.getElementById("calendar");
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    const monthNames = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho",
+    "Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+    let html = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <button onclick="prevMonth()">◀</button>
+            <strong>${monthNames[month]} ${year}</strong>
+            <button onclick="nextMonth()">▶</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:8px;">
+    `;
+
+    const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+    days.forEach(d => {
+        html += `<div style="text-align:center; font-weight:600;">${d}</div>`;
+    });
+
+    for (let i = 0; i < firstDay; i++) html += `<div></div>`;
+
+    for (let day = 1; day <= lastDate; day++) {
+
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+        const eventosDoDia = eventos.filter(e => e.data === dateStr);
+
+        html += `
+            <div style="
+                height:90px;
+                background:#f9fafb;
+                border:1px solid #e5e7eb;
+                border-radius:8px;
+                padding:6px;
+                display:flex;
+                flex-direction:column;
+            ">
+                <div style="text-align:right; font-weight:600;">${day}</div>
+        `;
+
+        eventosDoDia.forEach(ev => {
+            html += `
+                <div onclick='abrirModal(${JSON.stringify(ev)})'
+                style="
+                    margin-top:4px;
+                    font-size:11px;
+                    background:var(--verde);
+                    color:#fff;
+                    padding:2px 4px;
+                    border-radius:4px;
+                    cursor:pointer;
+                ">
+                    ${ev.nome}
+                </div>
+            `;
+        });
+
+        html += `</div>`;
     }
 
-    document.addEventListener('click', function (e) {
-        const wrapper = document.getElementById('cidadeDropdownWrapper');
-        if (!wrapper.contains(e.target)) {
-            document.getElementById('cidadeDropdown').style.display = 'none';
-        }
-    });
+    html += `</div>`;
+    calendar.innerHTML = html;
+}
+
+function abrirModal(ev) {
+    document.getElementById("modal").style.display = "flex";
+    modalTitulo.innerText = ev.nome;
+    modalData.innerText = "📅 " + ev.data;
+    modalHora.innerText = "⏰ " + ev.horario;
+    modalLocal.innerText = "📍 " + ev.local;
+    modalCategoria.innerText = "🏷 " + (ev.categoria?.nome ?? '-');
+    modalDescricao.innerText = ev.descricao;
+}
+
+function fecharModal() {
+    document.getElementById("modal").style.display = "none";
+}
+
+function prevMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+}
+
+function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+}
+
+function toggleDropdown() {
+    let el = document.getElementById('cidadeDropdown');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+renderCalendar();
+
 </script>
+
 @endpush
