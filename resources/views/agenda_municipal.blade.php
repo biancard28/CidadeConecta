@@ -44,54 +44,101 @@
                 📍 {{ $cidade->nome }}
             </button>
 
-            {{-- DROPDOWN --}}
-            <div id="cidadeDropdown" style="
-                display:none;
-                position:absolute;
-                right:0;
-                margin-top:8px;
-                background:#fff;
-                border-radius:10px;
-                padding:14px;
-                box-shadow:0 10px 30px rgba(0,0,0,0.15);
-                min-width:200px;
-                z-index:999;
-            ">
+<div id="cidadeDropdown" style="
+    display:none;
+    position:absolute;
+    right:0;
+    margin-top:8px;
+    background:#fff;
+    border-radius:10px;
+    padding:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.15);
+    min-width:250px;
+    z-index:999;
+">
 
-                {{-- UF PEQUENO --}}
-                <p style="
-                    margin:0;
-                    font-size:10px;
-                    line-height:12px;
-                    color:#6b7280;
+    {{-- BUSCA --}}
+    <input type="text" id="buscarCidade" placeholder="Buscar cidade..."
+        onkeyup="filtrarCidades()"
+        style="
+            width:100%;
+            padding:8px;
+            border-radius:8px;
+            border:1px solid #e5e7eb;
+            margin-bottom:10px;
+        ">
+
+    {{-- LISTA DE CIDADES --}}
+    <div style="max-height:200px; overflow-y:auto;">
+
+        @foreach($cidades as $c)
+
+            @if($c->id == $cidade->id)
+                <div class="cidade-item" style="
+                    display:block;
+                    padding:6px;
+                    border-radius:6px;
+                    background:var(--verde);
+                    color:#fff;
+                    font-weight:600;
+                    cursor:default;
                 ">
+                    📍 {{ $c->nome }} (Atual)
+                </div>
+            @else
+                <a href="{{ route('cidades.show', $c->id) }}"
+                   class="cidade-item"
+                   style="
+                        display:block;
+                        padding:6px;
+                        border-radius:6px;
+                        text-decoration:none;
+                        color:#111827;
+                   ">
+                    {{ $c->nome }}
+                </a>
+            @endif
+
+        @endforeach
+
+    </div>
+
+    <hr style="margin:10px 0;">
+
+    {{-- INFO --}}
+    <p style="margin:0;font-size:10px;color:#6b7280;">
+        <strong>UF:</strong> {{ $cidade->uf }}
+    </p>
+
+    <p style="margin:4px 0 10px 0;font-size:10px;color:#6b7280;">
+        <strong>CEP:</strong> {{ $cidade->cep }}
+    </p>
+
+    <a href="{{ route('home') }}" style="
+        display:block;
+        text-align:center;
+        background:#111827;
+        color:#fff;
+        padding:8px;
+        border-radius:8px;
+        text-decoration:none;
+        font-size:12px;
+        font-weight:600;
+    ">
+        ⬅ Voltar para início
+    </a>
+
+</div>
+
+                <p style="margin:0;font-size:10px;color:#6b7280;">
                     <strong>UF:</strong> {{ $cidade->uf }}
                 </p>
 
-                {{-- CEP PEQUENO --}}
-                <p style="
-                    margin:4px 0 10px 0;
-                    font-size:10px;
-                    line-height:12px;
-                    color:#6b7280;
-                ">
+                <p style="margin:4px 0 10px 0;font-size:10px;color:#6b7280;">
                     <strong>CEP:</strong> {{ $cidade->cep }}
                 </p>
 
-                {{-- BOTÃO VOLTAR HOME --}}
-                <a href="{{ route('home') }}" style="
-                    display:block;
-                    text-align:center;
-                    background:#111827;
-                    color:#fff;
-                    padding:8px;
-                    border-radius:8px;
-                    text-decoration:none;
-                    font-size:12px;
-                    font-weight:600;
-                ">
-                    ⬅ Voltar para início
-                </a>
+
 
             </div>
         </div>
@@ -107,7 +154,6 @@
         overflow:hidden;
     ">
 
-        {{-- HEADER CARD --}}
         <div style="
             background:linear-gradient(90deg, var(--verde), #16a34a);
             color:#fff;
@@ -118,7 +164,6 @@
             📅 Agenda do Mês
         </div>
 
-        {{-- CONTEÚDO --}}
         <div style="padding:28px; display:flex; gap:28px; align-items:flex-start;">
 
             {{-- FILTRO --}}
@@ -140,13 +185,7 @@
                 <div style="margin-bottom:16px;">
                     <label style="font-size:12px; color:#6b7280;">Categoria</label>
 
-                    <select name="categoria" style="
-                        width:100%;
-                        margin-top:6px;
-                        padding:10px;
-                        border-radius:10px;
-                        border:1px solid #e5e7eb;
-                    ">
+                    <select name="categoria" style="width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1px solid #e5e7eb;">
                         <option value="">Todas</option>
 
                         @foreach($categorias ?? [] as $cat)
@@ -161,48 +200,24 @@
                 <div style="margin-bottom:16px;">
                     <label style="font-size:12px; color:#6b7280;">Período</label>
 
-                    <input type="date" name="data_inicio"
-                        value="{{ request('data_inicio') }}"
+                    <input type="date" name="data_inicio" value="{{ request('data_inicio') }}"
                         style="width:100%; margin-top:6px; padding:10px; border-radius:10px; border:1px solid #e5e7eb;">
 
-                    <input type="date" name="data_fim"
-                        value="{{ request('data_fim') }}"
+                    <input type="date" name="data_fim" value="{{ request('data_fim') }}"
                         style="width:100%; margin-top:8px; padding:10px; border-radius:10px; border:1px solid #e5e7eb;">
                 </div>
 
                 <div style="display:flex; gap:8px;">
-                    <button type="submit" style="
-                        flex:1;
-                        background:var(--verde);
-                        color:#fff;
-                        border:none;
-                        padding:10px;
-                        border-radius:10px;
-                        font-weight:600;
-                        cursor:pointer;
-                    ">Filtrar</button>
+                    <button type="submit" style="flex:1;background:var(--verde);color:#fff;border:none;padding:10px;border-radius:10px;font-weight:600;">Filtrar</button>
 
-                    <a href="{{ url()->current() }}" style="
-                        flex:1;
-                        text-align:center;
-                        background:#f3f4f6;
-                        padding:10px;
-                        border-radius:10px;
-                        text-decoration:none;
-                        color:#111827;
-                        font-weight:600;
-                    ">Limpar</a>
+                    <a href="{{ url()->current() }}" style="flex:1;text-align:center;background:#f3f4f6;padding:10px;border-radius:10px;text-decoration:none;color:#111827;font-weight:600;">Limpar</a>
                 </div>
 
             </form>
 
             {{-- CALENDÁRIO --}}
             <div style="flex:1; min-width:0;">
-                <div id="calendar" style="
-                    background:#fff;
-                    border-radius:12px;
-                    padding:16px;
-                "></div>
+                <div id="calendar" style="background:#fff;border-radius:12px;padding:16px;"></div>
             </div>
 
         </div>
@@ -211,52 +226,49 @@
 </div>
 
 {{-- MODAL --}}
-<div id="modal" style="
-    display:none;
-    position:fixed;
-    top:0; left:0;
-    width:100%; height:100%;
-    background:rgba(0,0,0,0.6);
-    justify-content:center;
-    align-items:center;
-">
-
-    <div style="
-        background:#fff;
-        padding:24px;
-        border-radius:14px;
-        width:400px;
-        box-shadow:0 20px 50px rgba(0,0,0,0.2);
-    ">
-        <h3 id="modalTitulo" style="margin-bottom:10px;"></h3>
+<div id="modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
+    <div style="background:#fff;padding:24px;border-radius:14px;width:400px;">
+        <h3 id="modalTitulo"></h3>
         <p id="modalData"></p>
         <p id="modalHora"></p>
         <p id="modalLocal"></p>
         <p id="modalCategoria"></p>
         <p id="modalDescricao"></p>
 
-        <button onclick="fecharModal()" style="
-            margin-top:14px;
-            width:100%;
-            background:var(--verde);
-            color:#fff;
-            padding:10px;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-        ">Fechar</button>
+        <button onclick="fecharModal()" style="margin-top:14px;width:100%;background:var(--verde);color:#fff;padding:10px;border:none;border-radius:10px;">
+            Fechar
+        </button>
     </div>
-
 </div>
 
 @endsection
 
 @push('scripts')
-
 <script>
 
 const eventos = @json($eventos);
 let currentDate = new Date();
+
+/* FILTROS */
+const urlParams = new URLSearchParams(window.location.search);
+const filtroCategoria = urlParams.get('categoria');
+const filtroInicio = urlParams.get('data_inicio');
+const filtroFim = urlParams.get('data_fim');
+
+function filtrarEventos(lista) {
+    return lista.filter(ev => {
+
+        // 🔥 ESSA LINHA RESOLVE O "TODAS"
+        if (filtroCategoria && filtroCategoria !== "" && ev.categoria_id != filtroCategoria) {
+            return false;
+        }
+
+        if (filtroInicio && ev.data < filtroInicio) return false;
+        if (filtroFim && ev.data > filtroFim) return false;
+
+        return true;
+    });
+}
 
 /* CALENDÁRIO */
 function renderCalendar() {
@@ -270,6 +282,8 @@ function renderCalendar() {
 
     const monthNames = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho",
     "Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+    const eventosFiltrados = filtrarEventos(eventos);
 
     let html = `
         <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
@@ -292,7 +306,7 @@ function renderCalendar() {
     for (let day = 1; day <= lastDate; day++) {
 
         const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        const eventosDoDia = eventos.filter(e => e.data === dateStr);
+        const eventosDoDia = eventosFiltrados.filter(e => e.data === dateStr);
 
         html += `
             <div style="min-height:95px;background:#f9fafb;border-radius:10px;padding:6px;">
@@ -330,18 +344,9 @@ function fecharModal() {
     document.getElementById("modal").style.display = "none";
 }
 
-/* NAV CALENDÁRIO */
-function prevMonth() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
-}
+function prevMonth() { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
+function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
 
-function nextMonth() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
-}
-
-/* DROPDOWN */
 function toggleDropdown() {
     let el = document.getElementById('cidadeDropdown');
     el.style.display = el.style.display === 'block' ? 'none' : 'block';
@@ -350,5 +355,4 @@ function toggleDropdown() {
 renderCalendar();
 
 </script>
-
 @endpush

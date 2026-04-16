@@ -19,9 +19,27 @@ class SiteController extends Controller
     {
         // pega categorias da cidade
         $categorias = $cidade->categorias;
+{
+    $categorias = $cidade->categorias;
+
+    $eventos = $cidade->eventos()
+        ->with('categoria')
+        ->orderBy('data')
+        ->get();
+
+    // 🔥 ESSA LINHA QUE FALTA
+    $cidades = Cidade::all();
+
+    return view('agenda_municipal', [
+        'cidade' => $cidade,
+        'categorias' => $categorias,
+        'eventos' => $eventos,
+        'cidades' => $cidades, // 🔥 ESSENCIAL
+    ]);
+}
 
         // FILTRO POR CATEGORIA
-        if ($request->has('categoria')) {
+        if ($request->has('categoria') && $request->categoria != '') {
             $eventos = Evento::where('categoria_id', $request->categoria)
                 ->orderBy('data')
                 ->get();
@@ -32,4 +50,5 @@ class SiteController extends Controller
 
         return view('agenda_municipal', compact('cidade', 'categorias', 'eventos'));
     }
+
 }
