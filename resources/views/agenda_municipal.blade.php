@@ -93,7 +93,7 @@
                                     📍 {{ $c->nome }} (Atual)
                                 </div>
                             @else
-                                <a href="{{ route('cidades.show', $c->id) }}"
+                                <a href="{{ route('site.agenda_municipal', $c->id) }}"
                                     style="
                                     display:block;
                                     padding:6px;
