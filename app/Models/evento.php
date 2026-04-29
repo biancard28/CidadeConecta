@@ -27,4 +27,9 @@ class Evento extends Model
     {
         return $this->belongsTo(Categoria::class);
     }
+
+    public function imagens()
+{
+    return $this->hasMany(EventoImagem::class);
+}
 }
