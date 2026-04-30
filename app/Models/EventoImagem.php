@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventoImagem extends Model
 {
+    protected $table = 'evento_imagens';
+
     protected $fillable = [
         'evento_id',
         'imagem'
     ];
-
-    public function evento()
-    {
-        return $this->belongsTo(Evento::class);
-    }
 }

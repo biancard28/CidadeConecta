@@ -17,7 +17,7 @@ Route::get('/', [SiteController::class, 'home'])->name('home');
 
 /*
 |--------------------------------------------------------------------------
-| AGENDA MUNICIPAL (CORRIGIDO ✅)
+| AGENDA MUNICIPAL
 |--------------------------------------------------------------------------
 */
 Route::get('/agenda-municipal/{cidade}', [SiteController::class, 'agenda_municipal'])
@@ -25,7 +25,7 @@ Route::get('/agenda-municipal/{cidade}', [SiteController::class, 'agenda_municip
 
 /*
 |--------------------------------------------------------------------------
-| AUTOCOMPLETE (PÚBLICO) 🔥
+| AUTOCOMPLETE
 |--------------------------------------------------------------------------
 */
 Route::get('/cidades/autocomplete', [CidadeController::class, 'autocomplete']);
@@ -49,10 +49,17 @@ Route::middleware('auth')->group(function () {
     | USUÁRIOS DA CIDADE
     |--------------------------------------------------------------------------
     */
-    Route::get('/cidades/usuarios', [CidadeUsuarioController::class, 'index'])->name('cidades.usuarios.index');
-    Route::get('/cidades/usuarios/create', [CidadeUsuarioController::class, 'create'])->name('cidades.usuarios.create');
-    Route::post('/cidades/usuarios/{cidade}', [CidadeUsuarioController::class, 'store'])->name('cidades.usuarios.store');
-    Route::delete('/cidades/{cidade}/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])->name('cidades.usuarios.destroy');
+    Route::get('/cidades/usuarios', [CidadeUsuarioController::class, 'index'])
+        ->name('cidades.usuarios.index');
+
+    Route::get('/cidades/usuarios/create', [CidadeUsuarioController::class, 'create'])
+        ->name('cidades.usuarios.create');
+
+    Route::post('/cidades/usuarios/{cidade}', [CidadeUsuarioController::class, 'store'])
+        ->name('cidades.usuarios.store');
+
+    Route::delete('/cidades/{cidade}/usuarios/{user}', [CidadeUsuarioController::class, 'destroy'])
+        ->name('cidades.usuarios.destroy');
 
     /*
     |--------------------------------------------------------------------------
@@ -66,26 +73,27 @@ Route::middleware('auth')->group(function () {
     | EVENTOS
     |--------------------------------------------------------------------------
     */
-    Route::resource('eventos', EventoController::class);
+    // 🔥 PRIMEIRO: rota custom (TEM que vir antes do resource)
+Route::delete('/eventos/delete-selecionados', [EventoController::class, 'deleteSelecionados'])
+->name('eventos.deleteSelecionados');
+
+// CRUD NORMAL
+Route::resource('eventos', EventoController::class);
 
     /*
     |--------------------------------------------------------------------------
     | PERFIL
     |--------------------------------------------------------------------------
     */
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
 
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD
-|--------------------------------------------------------------------------
-*/
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+});
 
 /*
 |--------------------------------------------------------------------------
