@@ -3,52 +3,77 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cidade;
-use App\Models\Evento;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class SiteController extends Controller
 {
-    // HOME
     public function home()
     {
         return view('home');
     }
 
-    // AGENDA DA CIDADE
     public function agenda_municipal(Request $request, Cidade $cidade)
     {
-        // pega categorias da cidade
         $categorias = $cidade->categorias;
-{
-    $categorias = $cidade->categorias;
 
-    $eventos = $cidade->eventos()
-        ->with('categoria')
-        ->orderBy('data')
-        ->get();
+        $query = $cidade->eventos()
+            ->with(['categoria', 'imagens'])
+            ->orderBy('data');
 
-    // 🔥 ESSA LINHA QUE FALTA
-    $cidades = Cidade::all();
-
-    return view('agenda_municipal', [
-        'cidade' => $cidade,
-        'categorias' => $categorias,
-        'eventos' => $eventos,
-        'cidades' => $cidades, // 🔥 ESSENCIAL
-    ]);
-}
-
-        // FILTRO POR CATEGORIA
-        if ($request->has('categoria') && $request->categoria != '') {
-            $eventos = Evento::where('categoria_id', $request->categoria)
-                ->orderBy('data')
-                ->get();
-        } else {
-            // todos eventos da cidade
-            $eventos = $cidade->eventos()->orderBy('data')->get();
+        if ($request->filled('categoria')) {
+            $query->where('categoria_id', $request->categoria);
         }
 
-        return view('agenda_municipal', compact('cidade', 'categorias', 'eventos'));
-    }
+        if ($request->filled('data_inicio')) {
+            $query->whereDate('data', '>=', $request->data_inicio);
+        }
 
+        if ($request->filled('data_fim')) {
+            $query->whereDate('data', '<=', $request->data_fim);
+        }
+
+        $eventos = $query->get();
+
+        foreach ($eventos as $evento) {
+            $imagensFormatadas = [];
+
+            foreach ($evento->imagens as $img) {
+                $imagensFormatadas[] = [
+                    'url' => asset('storage/' . $img->imagem),
+                ];
+            }
+
+            $evento->setAttribute(
+                'arquivo_url',
+                $evento->arquivo
+                    ? asset('storage/' . $evento->arquivo)
+                    : null
+            );
+
+            $evento->setAttribute('imagens_formatadas', $imagensFormatadas);
+            $evento->setAttribute(
+                'data_formatada',
+                Carbon::parse($evento->data)->format('d/m/Y')
+            );
+
+            $evento->setAttribute(
+                'recorrencia_formatada',
+                $evento->recorrencia
+                    ? ucfirst($evento->recorrencia)
+                    : '-'
+            );
+        }
+
+        $eventos = $eventos->values();
+
+        $cidades = Cidade::orderBy('nome')->get();
+
+        return view('agenda_municipal', [
+            'cidade' => $cidade,
+            'categorias' => $categorias,
+            'eventos' => $eventos,
+            'cidades' => $cidades,
+        ]);
+    }
 }

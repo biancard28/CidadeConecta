@@ -100,7 +100,7 @@
                                     border-radius:6px;
                                     text-decoration:none;
                                     color:#111827;
-                               ">
+                                ">
                                     {{ $c->nome }}
                                 </a>
                             @endif
@@ -228,139 +228,393 @@
     </div>
 
     {{-- MODAL --}}
-    <div id="modal"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;">
-        <div style="background:#fff;padding:24px;border-radius:14px;width:400px;">
-            <h3 id="modalTitulo"></h3>
-            <p id="modalData"></p>
-            <p id="modalHora"></p>
-            <p id="modalLocal"></p>
-            <p id="modalCategoria"></p>
-            <p id="modalDescricao"></p>
+    <div id="modal" onclick="fecharModalFora(event)"
+        style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.65);
+        justify-content:center;
+        align-items:center;
+        z-index:9999;
+        padding:20px;
+    ">
 
-            <button onclick="fecharModal()"
-                style="margin-top:14px;width:100%;background:var(--verde);color:#fff;padding:10px;border:none;border-radius:10px;">
-                Fechar
-            </button>
+        <div
+            style="
+        background:#fff;
+        width:1050px;
+        max-width:98%;
+        max-height:95vh;
+        border-radius:20px;
+        box-shadow:0 25px 70px rgba(0,0,0,0.35);
+    ">
+
+            <div
+                style="
+            background:linear-gradient(90deg, var(--verde), #16a34a);
+            color:#fff;
+            padding:22px 28px;
+            border-radius:20px 20px 0 0;
+        ">
+                <h2 id="modalTitulo" style="margin:0;font-size:24px;"></h2>
+            </div>
+
+            <div style="padding:28px;font-size:15px;color:#374151;overflow-y: auto;max-height: 660px;">
+
+                <div
+                    style="
+                    display:grid;
+                    grid-template-columns:repeat(5, 1fr);
+                    gap:14px;
+                    margin-bottom:24px;
+                ">
+
+                    <div style="background:#f8fafc;padding:18px;border-radius:16px;">
+                        <strong style="font-size:15px;"> Data</strong>
+                        <p id="modalData" style="font-size:17px;margin:8px 0 0;font-weight:600;"></p>
+                    </div>
+
+                    <div style="background:#f8fafc;padding:18px;border-radius:16px;">
+                        <strong style="font-size:15px;"> Hora</strong>
+                        <p id="modalHora" style="font-size:17px;margin:8px 0 0;font-weight:600;"></p>
+                    </div>
+
+                    <div style="background:#f8fafc;padding:18px;border-radius:16px;">
+                        <strong style="font-size:15px;"> Local</strong>
+                        <p id="modalLocal" style="font-size:17px;margin:8px 0 0;font-weight:600;"></p>
+                    </div>
+
+                    <div style="background:#f8fafc;padding:18px;border-radius:16px;">
+                        <strong style="font-size:15px;"> Categoria</strong>
+                        <p id="modalCategoria" style="font-size:17px;margin:8px 0 0;font-weight:600;"></p>
+                    </div>
+
+                    <div style="background:#f8fafc;padding:18px;border-radius:16px;">
+                        <strong style="font-size:15px;"> Recorrência</strong>
+                        <p id="modalRecorrencia" style="font-size:17px;margin:8px 0 0;font-weight:600;"></p>
+                    </div>
+
+                </div>
+                <hr style="margin:18px 0;">
+
+                <h4 style="margin-bottom:8px;">Descrição</h4>
+                <p id="modalDescricao" style="line-height:1.6;"></p>
+
+                <div id="modalArquivoBox" style="display:none;margin-top:22px;">
+                    <h4 style="margin-bottom:10px;">Arquivo anexado</h4>
+
+                    <a id="modalArquivoLink" href="#" target="_blank"
+                        style="
+                        display:inline-flex;
+                        align-items:center;
+                        gap:8px;
+                        background:#f3f4f6;
+                        color:#111827;
+                        padding:12px 16px;
+                        border-radius:12px;
+                        text-decoration:none;
+                        font-weight:600;
+                    ">
+                        📎 Ver arquivo
+                    </a>
+                </div>
+
+                <div id="modalImagensBox" style="display:none;margin-top:25px;">
+
+                    <div id="modalImagens"
+                        style="
+                        display:grid;
+                        grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+                        gap:16px;
+                    ">
+                    </div>
+
+                </div>
+                <div id="modalImagensBox" style="
+        display:none;
+        margin-top:30px;
+    ">
+
+                    <h4 style="
+        margin-bottom:16px;
+        font-size:18px;
+        font-weight:700;
+    ">
+                        📸 Imagens do Evento
+                    </h4>
+
+                    <div id="modalImagens"
+                        style="
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+            gap:18px;
+        ">
+                    </div>
+
+                </div>
+
+                <button onclick="fecharModal()"
+                    style="
+                    margin-top:28px;
+                    width:100%;
+                    background:var(--verde);
+                    color:#fff;
+                    padding:13px;
+                    border:none;
+                    border-radius:12px;
+                    font-weight:700;
+                    cursor:pointer;
+                ">
+                    Fechar
+                </button>
+
+            </div>
         </div>
     </div>
 
 @endsection
 
 @push('scripts')
-    <script>
-        const eventos = @json($eventos);
-        let currentDate = new Date();
+    @push('scripts')
+        <script>
+            const eventos = Object.values(@json($eventos));
+            let currentDate = new Date();
 
-        /* FILTROS */
-        const urlParams = new URLSearchParams(window.location.search);
-        const filtroCategoria = urlParams.get('categoria');
-        const filtroInicio = urlParams.get('data_inicio');
-        const filtroFim = urlParams.get('data_fim');
+            const urlParams = new URLSearchParams(window.location.search);
+            const filtroCategoria = urlParams.get('categoria');
+            const filtroInicio = urlParams.get('data_inicio');
+            const filtroFim = urlParams.get('data_fim');
 
-        function filtrarEventos(lista) {
-            return lista.filter(ev => {
+            function filtrarEventos(lista) {
+                return Object.values(lista).filter(ev => {
+                    if (filtroCategoria && ev.categoria_id != filtroCategoria) {
+                        return false;
+                    }
 
-                if (filtroCategoria && filtroCategoria !== "" && ev.categoria_id != filtroCategoria) {
-                    return false;
-                }
+                    if (filtroInicio && ev.data < filtroInicio) return false;
+                    if (filtroFim && ev.data > filtroFim) return false;
 
-                if (filtroInicio && ev.data < filtroInicio) return false;
-                if (filtroFim && ev.data > filtroFim) return false;
+                    return true;
+                });
+            }
 
-                return true;
-            });
-        }
+            function renderCalendar() {
+                const calendar = document.getElementById("calendar");
 
-        /* CALENDÁRIO */
-        function renderCalendar() {
+                if (!calendar) return;
 
-            const calendar = document.getElementById("calendar");
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const lastDate = new Date(year, month + 1, 0).getDate();
+                const firstDay = new Date(year, month, 1).getDay();
+                const lastDate = new Date(year, month + 1, 0).getDate();
 
-            const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho",
-                "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-            ];
+                const monthNames = [
+                    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+                ];
 
-            const eventosFiltrados = filtrarEventos(eventos);
+                const eventosFiltrados = filtrarEventos(eventos);
 
-            let html = `
-        <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
-            <button onclick="prevMonth()">◀</button>
-            <strong>${monthNames[month]} ${year}</strong>
-            <button onclick="nextMonth()">▶</button>
-        </div>
+                let html = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <button onclick="prevMonth()" style="padding:8px 14px;border:none;border-radius:8px;cursor:pointer;">◀</button>
+                <strong style="font-size:22px;">${monthNames[month]} ${year}</strong>
+                <button onclick="nextMonth()" style="padding:8px 14px;border:none;border-radius:8px;cursor:pointer;">▶</button>
+            </div>
 
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;">
-    `;
-
-            const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-            days.forEach(d => {
-                html += `<div style="text-align:center;font-weight:600;font-size:13px;">${d}</div>`;
-            });
-
-            for (let i = 0; i < firstDay; i++) html += `<div></div>`;
-
-            for (let day = 1; day <= lastDate; day++) {
-
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const eventosDoDia = eventosFiltrados.filter(e => e.data === dateStr);
-
-                html += `
-            <div style="min-height:150px;background:#f9fafb;border-radius:10px;padding:6px;">
-                <div style="text-align:right;font-weight:600;font-size:13px;">${day}</div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;">
         `;
 
-                eventosDoDia.forEach(ev => {
+                const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+                days.forEach(d => {
                     html += `
-                <div onclick='abrirModal(${JSON.stringify(ev)})'
-                style="margin-top:4px;font-size:13px;background:var(--verde);color:#fff;padding:3px 6px;border-radius:6px;cursor:pointer;">
-                    ${ev.nome}
+                <div style="text-align:center;font-weight:700;font-size:14px;color:#111827;">
+                    ${d}
                 </div>
             `;
                 });
 
+                for (let i = 0; i < firstDay; i++) {
+                    html += `<div></div>`;
+                }
+
+                for (let day = 1; day <= lastDate; day++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const eventosDoDia = eventosFiltrados.filter(e => e.data === dateStr);
+
+                    html += `
+                <div style="min-height:150px;background:#f9fafb;border-radius:12px;padding:8px;border:1px solid #e5e7eb;">
+                    <div style="text-align:right;font-weight:700;font-size:14px;margin-bottom:6px;">
+                        ${day}
+                    </div>
+            `;
+
+                    eventosDoDia.forEach(ev => {
+                        html += `
+                    <div onclick='abrirModal(${JSON.stringify(ev)})'
+                        style="margin-top:5px;font-size:13px;background:var(--verde);color:#fff;padding:6px 8px;border-radius:8px;cursor:pointer;">
+                        ${ev.nome}
+                    </div>
+                `;
+                    });
+
+                    html += `</div>`;
+                }
+
                 html += `</div>`;
+
+                calendar.innerHTML = html;
             }
 
-            html += `</div>`;
-            calendar.innerHTML = html;
-        }
+            function abrirModal(ev) {
+                window.eventoAtual = ev;
+                document.getElementById("modal").style.display = "flex";
 
-        function abrirModal(ev) {
-            document.getElementById("modal").style.display = "flex";
-            modalTitulo.innerText = ev.nome;
-            modalData.innerText = "📅 " + ev.data;
-            modalHora.innerText = "⏰ " + ev.horario;
-            modalLocal.innerText = "📍 " + ev.local;
-            modalCategoria.innerText = "🏷 " + (ev.categoria?.nome ?? '-');
-            modalDescricao.innerText = ev.descricao;
-        }
+                modalTitulo.innerText = ev.nome ?? '-';
+                modalData.innerText = ev.data_formatada ?? '-';
+                modalHora.innerText = "" + (ev.horario ?? '-');
+                modalLocal.innerText = "" + (ev.local ?? '-');
+                modalCategoria.innerText = "" + (ev.categoria?.nome ?? '-');
+                modalDescricao.innerText = ev.descricao ?? '-';
+                modalRecorrencia.innerText = ev.recorrencia ?? '-';
 
-        function fecharModal() {
-            document.getElementById("modal").style.display = "none";
-        }
+                function abrirImagem(url) {
+    const imagensDiv = document.getElementById("modalImagens");
 
-        function prevMonth() {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar();
-        }
+    imagensDiv.innerHTML = `
+        <div style="text-align:center;">
+            <img src="${url}"
+                style="
+                    max-width:100%;
+                    max-height:70vh;
+                    object-fit:contain;
+                    background:#fff;
+                    border-radius:18px;
+                    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+                ">
 
-        function nextMonth() {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar();
-        }
+            <button onclick="abrirModal(window.eventoAtual)"
+                style="
+                    margin-top:18px;
+                    background:var(--verde);
+                    color:#fff;
+                    border:none;
+                    padding:12px 24px;
+                    border-radius:12px;
+                    font-weight:700;
+                    cursor:pointer;
+                ">
+                ⬅ Voltar
+            </button>
+        </div>
+    `;
+}
 
-        function toggleDropdown() {
-            let el = document.getElementById('cidadeDropdown');
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
+                const arquivoBox = document.getElementById("modalArquivoBox");
+                const arquivoLink = document.getElementById("modalArquivoLink");
 
-        renderCalendar();
-    </script>
-@endpush
+                if (arquivoBox && arquivoLink) {
+                    if (ev.arquivo_url) {
+                        arquivoBox.style.display = "block";
+                        arquivoLink.href = ev.arquivo_url;
+                    } else {
+                        arquivoBox.style.display = "none";
+                        arquivoLink.href = "#";
+                    }
+                }
+
+                const imagensBox = document.getElementById("modalImagensBox");
+                const imagensDiv = document.getElementById("modalImagens");
+
+                if (imagensBox && imagensDiv) {
+                    imagensDiv.innerHTML = "";
+
+                    if (ev.imagens_formatadas && ev.imagens_formatadas.length > 0) {
+                        imagensBox.style.display = "block";
+
+                        ev.imagens_formatadas.forEach(img => {
+                                imagensDiv.innerHTML += `
+                        <img src="${img.url}"
+                            onclick="abrirImagem('${img.url}')"
+                            style="
+                                width:100%;
+                                height:360px;
+                                object-fit:contain;
+                                background:#f8fafc;
+                                border-radius:16px;
+                                box-shadow:0 10px 25px rgba(0,0,0,0.18);
+                                cursor:zoom-in;
+                            ">
+                    `;
+                        });
+                    } else {
+                        imagensBox.style.display = "none";
+                    }
+                }
+            }
+
+            function fecharModal() {
+                document.getElementById("modal").style.display = "none";
+            }
+
+            function prevMonth() {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            }
+
+            function nextMonth() {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            }
+
+            function toggleDropdown() {
+                let el = document.getElementById('cidadeDropdown');
+                el.style.display = el.style.display === 'block' ? 'none' : 'block';
+            }
+
+            function filtrarCidades() {
+                let input = document.getElementById('buscarCidade');
+                let filtro = input.value.toLowerCase();
+                let links = document.querySelectorAll('#cidadeDropdown a');
+
+                links.forEach(link => {
+                    link.style.display = link.innerText.toLowerCase().includes(filtro) ? 'block' : 'none';
+                });
+            }
+
+            function fecharModalFora(event) {
+    if (event.target.id === "modal") {
+        fecharModal();
+    }
+}
+
+            document.addEventListener("DOMContentLoaded", renderCalendar);
+        </script>
+        <style>
+            #modal>div::-webkit-scrollbar {
+                width: 7px;
+            }
+
+            #modal>div::-webkit-scrollbar-track {
+                background: #ecfdf5;
+                border-radius: 20px;
+            }
+
+            #modal>div::-webkit-scrollbar-thumb {
+                background: var(--verde);
+                border-radius: 20px;
+            }
+
+            #modal>div::-webkit-scrollbar-thumb:hover {
+                background: #16a34a;
+            }
+
+            #modal>div {
+                scrollbar-width: thin;
+                scrollbar-color: var(--verde) #ecfdf5;
+            }
+        </style>
+    @endpush
